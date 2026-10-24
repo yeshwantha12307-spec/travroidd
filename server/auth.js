@@ -132,8 +132,17 @@ export function requireAdmin(req, res, next) {
     });
   }
 
+  // Enforce mandatory initial password change on all administrative operations
+  if (req.user.must_change_password) {
+    return res.status(403).json({
+      error: 'Password change required. You must update your initial administrator password before accessing administrative features.',
+      code: 'PASSWORD_CHANGE_REQUIRED',
+    });
+  }
+
   next();
 }
+
 
 /**
  * Verify Google ID Token cryptographically

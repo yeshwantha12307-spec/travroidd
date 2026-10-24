@@ -17,12 +17,30 @@ export const AuthPage: React.FC = () => {
 
   const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/';
 
+  // Check for OAuth error callbacks from Supabase
+  useEffect(() => {
+    const hash = window.location.hash;
+    const search = window.location.search;
+    if (hash.includes('error=') || search.includes('error=')) {
+      const params = new URLSearchParams(hash.startsWith('#') ? hash.substring(1) : search);
+      const errDesc = params.get('error_description') || params.get('error');
+      if (errDesc) {
+        if (errDesc.toLowerCase().includes('provider') || errDesc.toLowerCase().includes('not enabled')) {
+          setShowGoogleModal(true);
+        } else {
+          toast.error(decodeURIComponent(errDesc.replace(/\+/g, ' ')));
+        }
+      }
+    }
+  }, []);
+
   // If already authenticated, redirect
   useEffect(() => {
     if (user) {
       navigate(user.role === 'admin' ? '/admin' : from, { replace: true });
     }
   }, [user, navigate, from]);
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -39,17 +39,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   // Helper to extract safe user object from Supabase or server
+  // Server-controlled role: MUST be in app_metadata.role or verified by backend.
+  // Client-editable user_metadata and raw email strings are NEVER trusted for privilege assignment.
   const buildUserFromSupabase = (sbUser: any): User => {
     const meta = sbUser.user_metadata || {};
-    const isSystemAdmin = sbUser.email?.toLowerCase() === 'admin@travroidd.com' || meta.role === 'admin';
+    const appMeta = sbUser.app_metadata || {};
+    const isAdmin = appMeta.role === 'admin';
     return {
       id: sbUser.id,
       email: sbUser.email?.toLowerCase() || '',
       name: meta.name || sbUser.email?.split('@')[0] || 'User',
-      role: isSystemAdmin ? 'admin' : (meta.role || 'customer'),
+      role: isAdmin ? 'admin' : 'customer',
       must_change_password: Boolean(meta.must_change_password),
     };
   };
+
 
   // Restore session from Supabase and Backend API
   const refreshUser = useCallback(async () => {
