@@ -5,6 +5,7 @@ import { Logo } from '../components/Logo';
 import { Button } from '../components/ui/Button';
 import { Input, Label } from '../components/ui/Input';
 import { useAuth } from '../context/AuthContext';
+import { isSupabaseConfigured } from '../lib/supabase';
 import { toast } from 'sonner';
 
 export const AuthPage: React.FC = () => {
@@ -16,6 +17,7 @@ export const AuthPage: React.FC = () => {
   const location = useLocation();
 
   const from = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/';
+
 
   // Check for OAuth error callbacks from Supabase
   useEffect(() => {
@@ -116,6 +118,19 @@ export const AuthPage: React.FC = () => {
             ? 'Sign in to access your personal trips and profile.'
             : 'Register to manage bookings and customize travel packages.'}
         </p>
+
+        {!isSupabaseConfigured && (
+          <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-3.5 text-left text-sm text-amber-900">
+            <div className="flex items-center gap-2 font-semibold text-amber-800">
+              <AlertCircle className="h-4 w-4 shrink-0 text-amber-600" />
+              <span>Backend Configuration Notice</span>
+            </div>
+            <p className="mt-1 text-xs leading-relaxed text-amber-700">
+              Supabase public credentials (<code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code>) are not configured in this deployment environment.
+              Please add them in your Vercel Project Settings to activate user accounts.
+            </p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           {mode === 'signup' && (
