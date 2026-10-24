@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { type Destination, INITIAL_DESTINATIONS } from '../data/destinations';
 import { useAuth } from './AuthContext';
+import { supabase } from '../lib/supabase';
 
 export interface Booking {
   id: string;
@@ -119,7 +120,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     localStorage.setItem(USER_LIKES_KEY, JSON.stringify(userLikes));
   }, [userLikes]);
 
-  // Fetch bookings securely from server based on role
+  // Fetch bookings securely from Supabase / API based on role
   const refreshBookings = useCallback(async () => {
     if (!user) {
       setBookings([]);
@@ -129,31 +130,61 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     setLoading(true);
     try {
+      // 1. Try querying Supabase tables directly
       if (isAdmin) {
-        // Fetch all bookings for administrator
-        const [bRes, eRes] = await Promise.all([
-          fetch('/api/admin/bookings', { credentials: 'include' }),
-          fetch('/api/admin/enquiries', { credentials: 'include' }),
-        ]);
+        const { data: sbBookings, error: bErr } = await supabase
+          .from('bookings')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-        if (bRes.ok) {
-          const bData = await bRes.json();
-          setBookings(bData.bookings || []);
+        const { data: sbEnquiries, error: eErr } = await supabase
+          .from('enquiries')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (!bErr && sbBookings) {
+          setBookings(sbBookings as Booking[]);
         }
-        if (eRes.ok) {
-          const eData = await eRes.json();
-          setEnquiries(eData.enquiries || []);
+        if (!eErr && sbEnquiries) {
+          setEnquiries(sbEnquiries as Enquiry[]);
+        }
+
+        // If Supabase tables are not yet created, seamlessly use backend API
+        if (bErr || eErr) {
+          const [bRes, eRes] = await Promise.all([
+            fetch('/api/admin/bookings', { credentials: 'include' }),
+            fetch('/api/admin/enquiries', { credentials: 'include' }),
+          ]);
+          if (bRes.ok) {
+            const bData = await bRes.json();
+            setBookings(bData.bookings || []);
+          }
+          if (eRes.ok) {
+            const eData = await eRes.json();
+            setEnquiries(eData.enquiries || []);
+          }
         }
       } else {
-        // Fetch customer's own bookings only
-        const res = await fetch('/api/bookings/my', { credentials: 'include' });
-        if (res.ok) {
-          const data = await res.json();
-          setBookings(data.bookings || []);
+        // Customer view: try Supabase RLS query
+        const { data: sbBookings, error: bErr } = await supabase
+          .from('bookings')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (!bErr && sbBookings) {
+          setBookings(sbBookings as Booking[]);
+        } else {
+          // Backend fallback
+          const res = await fetch('/api/bookings/my', { credentials: 'include' });
+          if (res.ok) {
+            const data = await res.json();
+            setBookings(data.bookings || []);
+          }
         }
       }
     } catch (e) {
-      console.error('Failed to load bookings from API:', e);
+      console.error('Failed to load bookings:', e);
     } finally {
       setLoading(false);
     }
@@ -166,6 +197,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const addBooking = async (
     bookingData: Omit<Booking, 'id' | 'created_at' | 'status'>
   ): Promise<Booking> => {
+    // 1. Post to backend security server
     const res = await fetch('/api/bookings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -179,6 +211,27 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
 
     const newBooking: Booking = data.booking;
+
+    // 2. Also sync to Supabase if table exists
+    try {
+      await supabase.from('bookings').insert([
+        {
+          id: newBooking.id,
+          user_id: user?.id,
+          full_name: newBooking.full_name,
+          email: newBooking.email,
+          phone: newBooking.phone,
+          destination: newBooking.destination,
+          travel_date: newBooking.travel_date,
+          travelers: newBooking.travelers,
+          price_per_person: newBooking.price_per_person,
+          total_amount: newBooking.total_amount,
+          notes: newBooking.notes,
+          status: 'pending',
+        },
+      ]);
+    } catch {}
+
     setBookings((prev) => [newBooking, ...prev]);
     return newBooking;
   };
@@ -187,6 +240,7 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     id: string,
     status: 'pending' | 'confirmed' | 'cancelled'
   ) => {
+    // 1. Update in backend API
     const res = await fetch(`/api/admin/bookings/${id}/status`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -198,6 +252,11 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const err = await res.json();
       throw new Error(err.error || 'Failed to update booking status');
     }
+
+    // 2. Sync to Supabase if available
+    try {
+      await supabase.from('bookings').update({ status }).eq('id', id);
+    } catch {}
 
     setBookings((prev) =>
       prev.map((b) => (b.id === id ? { ...b, status } : b))
@@ -214,6 +273,10 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const err = await res.json();
       throw new Error(err.error || 'Failed to delete booking');
     }
+
+    try {
+      await supabase.from('bookings').delete().eq('id', id);
+    } catch {}
 
     setBookings((prev) => prev.filter((b) => b.id !== id));
   };
@@ -239,6 +302,10 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       ...enquiryData,
     };
 
+    try {
+      await supabase.from('enquiries').insert([created]);
+    } catch {}
+
     setEnquiries((prev) => [created, ...prev]);
     return created;
   };
@@ -253,6 +320,10 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const err = await res.json();
       throw new Error(err.error || 'Failed to delete enquiry');
     }
+
+    try {
+      await supabase.from('enquiries').delete().eq('id', id);
+    } catch {}
 
     setEnquiries((prev) => prev.filter((e) => e.id !== id));
   };

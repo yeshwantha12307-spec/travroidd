@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { supabase } from '../lib/supabase';
 
 export interface User {
   id: string;
@@ -14,7 +15,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, pass: string) => Promise<{ error: Error | null; mustChangePassword?: boolean }>;
   signUp: (email: string, pass: string, name?: string) => Promise<{ error: Error | null }>;
-  signInWithGoogle: (credential: string) => Promise<{ error: Error | null }>;
+  signInWithGoogle: () => Promise<{ error: Error | null }>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -37,11 +38,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Validate session against the backend server on startup and refresh
+  // Helper to extract safe user object from Supabase or server
+  const buildUserFromSupabase = (sbUser: any): User => {
+    const meta = sbUser.user_metadata || {};
+    const isSystemAdmin = sbUser.email?.toLowerCase() === 'admin@travroidd.com' || meta.role === 'admin';
+    return {
+      id: sbUser.id,
+      email: sbUser.email?.toLowerCase() || '',
+      name: meta.name || sbUser.email?.split('@')[0] || 'User',
+      role: isSystemAdmin ? 'admin' : (meta.role || 'customer'),
+      must_change_password: Boolean(meta.must_change_password),
+    };
+  };
+
+  // Restore session from Supabase and Backend API
   const refreshUser = useCallback(async () => {
     try {
+      // 1. Check Supabase Auth session first
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const currentUser = buildUserFromSupabase(session.user);
+        setUser(currentUser);
+        setIsAdmin(currentUser.role === 'admin');
+        setLoading(false);
+        return;
+      }
+
+      // 2. Check Backend Server session
       const res = await fetch('/api/auth/me', {
-        headers: { 'Accept': 'application/json' },
+        headers: { Accept: 'application/json' },
         credentials: 'include',
       });
 
@@ -68,30 +93,82 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     refreshUser();
+
+    // Listen to Supabase auth state changes
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        const currentUser = buildUserFromSupabase(session.user);
+        setUser(currentUser);
+        setIsAdmin(currentUser.role === 'admin');
+      } else {
+        // Only clear if server also has no session
+        const res = await fetch('/api/auth/me', { credentials: 'include' }).catch(() => null);
+        if (res && res.ok) {
+          const data = await res.json().catch(() => null);
+          if (data?.user) {
+            setUser(data.user);
+            setIsAdmin(data.user.role === 'admin');
+            return;
+          }
+        }
+        setUser(null);
+        setIsAdmin(false);
+      }
+    });
+
+    return () => {
+      authListener.subscription.unsubscribe();
+    };
   }, [refreshUser]);
 
   const signIn = async (email: string, pass: string) => {
+    const cleanEmail = email.trim().toLowerCase();
+
+    // 1. Try Supabase Auth sign-in
+    try {
+      const { data, error: sbError } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password: pass,
+      });
+
+      if (!sbError && data?.user) {
+        const authUser = buildUserFromSupabase(data.user);
+        setUser(authUser);
+        setIsAdmin(authUser.role === 'admin');
+
+        // Also synchronize backend cookie
+        fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email: cleanEmail, password: pass }),
+        }).catch(() => {});
+
+        return {
+          error: null,
+          mustChangePassword: Boolean(authUser.must_change_password),
+        };
+      }
+    } catch {
+      // Fallback to backend server if Supabase fails
+    }
+
+    // 2. Try Backend API sign-in
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ email, password: pass }),
+        body: JSON.stringify({ email: cleanEmail, password: pass }),
       });
 
       const data = await res.json();
-
       if (!res.ok) {
-        return { error: new Error(data.error || 'Failed to sign in') };
+        return { error: new Error(data.error || 'Invalid email or password.') };
       }
 
       setUser(data.user);
       setIsAdmin(data.user.role === 'admin');
-
-      // Also store token in sessionStorage as secondary backup if cookies blocked
-      if (data.token) {
-        sessionStorage.setItem('travroidd_token', data.token);
-      }
 
       return {
         error: null,
@@ -103,104 +180,146 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signUp = async (email: string, pass: string, name?: string) => {
+    const cleanEmail = email.trim().toLowerCase();
+    const displayName = (name && name.trim()) || cleanEmail.split('@')[0];
+
+    // 1. Try Supabase Auth registration
+    try {
+      const { data, error: sbError } = await supabase.auth.signUp({
+        email: cleanEmail,
+        password: pass,
+        options: {
+          data: {
+            name: displayName,
+            role: 'customer', // strictly customer
+          },
+        },
+      });
+
+      if (!sbError && data?.user) {
+        const authUser = buildUserFromSupabase(data.user);
+        setUser(authUser);
+        setIsAdmin(false);
+
+        // Also sync backend
+        fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email: cleanEmail, password: pass, name: displayName }),
+        }).catch(() => {});
+
+        return { error: null };
+      }
+      if (sbError) {
+        return { error: new Error(sbError.message) };
+      }
+    } catch {
+      // Fallback to backend
+    }
+
+    // 2. Backend API fallback
     try {
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ email, password: pass, name }),
+        body: JSON.stringify({ email: cleanEmail, password: pass, name: displayName }),
       });
 
       const data = await res.json();
-
       if (!res.ok) {
         return { error: new Error(data.error || 'Failed to register account') };
       }
 
       setUser(data.user);
-      setIsAdmin(false); // New signups are always customer role
-
-      if (data.token) {
-        sessionStorage.setItem('travroidd_token', data.token);
-      }
-
+      setIsAdmin(false);
       return { error: null };
     } catch {
-      return { error: new Error('Network error. Could not connect to registration service.') };
+      return { error: new Error('Network error during registration.') };
     }
   };
 
-  const signInWithGoogle = async (credential: string) => {
+  const signInWithGoogle = async () => {
     try {
-      const res = await fetch('/api/auth/google', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ credential }),
+      // Official Supabase Google OAuth flow
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        return { error: new Error(data.error || 'Google authentication failed.') };
+      if (error) {
+        return { error: new Error(error.message) };
       }
-
-      setUser(data.user);
-      setIsAdmin(data.user.role === 'admin');
-
-      if (data.token) {
-        sessionStorage.setItem('travroidd_token', data.token);
-      }
-
       return { error: null };
     } catch {
-      return { error: new Error('Network error connecting to Google sign-in service.') };
+      return { error: new Error('Failed to initialize Google OAuth.') };
     }
   };
 
   const changePassword = async (currentPassword: string, newPassword: string) => {
-    try {
-      const token = sessionStorage.getItem('travroidd_token');
-      const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-      if (token) headers['Authorization'] = `Bearer ${token}`;
+    let hadError = false;
 
+    // 1. Update in Supabase
+    try {
+      const { error: sbError } = await supabase.auth.updateUser({
+        password: newPassword,
+        data: { must_change_password: false },
+      });
+      if (sbError) hadError = true;
+    } catch {
+      hadError = true;
+    }
+
+    // 2. Update in Backend API
+    try {
       const res = await fetch('/api/auth/change-password', {
         method: 'POST',
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ currentPassword, newPassword }),
       });
 
       const data = await res.json();
-      if (!res.ok) {
-        return { error: new Error(data.error || 'Failed to change password') };
-      }
-
-      if (data.user) {
+      if (res.ok && data.user) {
         setUser(data.user);
         setIsAdmin(data.user.role === 'admin');
+        return { error: null };
+      } else if (hadError && !res.ok) {
+        return { error: new Error(data.error || 'Failed to update password') };
       }
-
-      return { error: null };
     } catch {
-      return { error: new Error('Network error while updating password.') };
+      if (hadError) {
+        return { error: new Error('Failed to update password across providers.') };
+      }
     }
+
+    if (user) {
+      setUser({ ...user, must_change_password: false });
+    }
+    return { error: null };
   };
 
   const signOut = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch {}
+
     try {
       await fetch('/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
       });
-    } catch {
-      // Ignore network errors on logout
-    } finally {
-      setUser(null);
-      setIsAdmin(false);
-      sessionStorage.removeItem('travroidd_token');
-      localStorage.removeItem('travroidd_auth_user'); // Clean up any old mock key
-    }
+    } catch {}
+
+    setUser(null);
+    setIsAdmin(false);
   };
 
   return (

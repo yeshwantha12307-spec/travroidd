@@ -7,20 +7,6 @@ import { Input, Label } from '../components/ui/Input';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 
-declare global {
-  interface Window {
-    google?: {
-      accounts: {
-        id: {
-          initialize: (config: { client_id: string; callback: (res: { credential: string }) => void }) => void;
-          renderButton: (parent: HTMLElement, options: Record<string, unknown>) => void;
-          prompt: () => void;
-        };
-      };
-    };
-  }
-}
-
 export const AuthPage: React.FC = () => {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [submitting, setSubmitting] = useState(false);
@@ -37,19 +23,6 @@ export const AuthPage: React.FC = () => {
       navigate(user.role === 'admin' ? '/admin' : from, { replace: true });
     }
   }, [user, navigate, from]);
-
-  // Load official Google Identity Services SDK
-  useEffect(() => {
-    const existingScript = document.getElementById('google-gsi-script');
-    if (!existingScript) {
-      const script = document.createElement('script');
-      script.id = 'google-gsi-script';
-      script.src = 'https://accounts.google.com/gsi/client';
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
-    }
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -93,31 +66,23 @@ export const AuthPage: React.FC = () => {
     }
   };
 
-  const handleGoogleClick = () => {
-    // Check if Google Client ID is configured in client/environment
-    const googleClientId = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID;
-
-    if (window.google?.accounts?.id && googleClientId) {
-      window.google.accounts.id.initialize({
-        client_id: googleClientId,
-        callback: async (response) => {
-          if (response.credential) {
-            setSubmitting(true);
-            const res = await signInWithGoogle(response.credential);
-            setSubmitting(false);
-            if (res.error) {
-              toast.error(res.error.message);
-            } else {
-              toast.success('Signed in with Google!');
-              navigate(from, { replace: true });
-            }
-          }
-        },
-      });
-      window.google.accounts.id.prompt();
-    } else {
-      // Show setup instructions modal rather than creating a fake login
-      setShowGoogleModal(true);
+  const handleGoogleSignIn = async () => {
+    setSubmitting(true);
+    try {
+      const res = await signInWithGoogle();
+      if (res.error) {
+        if (
+          res.error.message.toLowerCase().includes('not enabled') ||
+          res.error.message.toLowerCase().includes('unsupported') ||
+          res.error.message.toLowerCase().includes('provider')
+        ) {
+          setShowGoogleModal(true);
+        } else {
+          toast.error(res.error.message);
+        }
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -193,7 +158,7 @@ export const AuthPage: React.FC = () => {
           variant="outline"
           className="w-full flex items-center justify-center gap-2"
           disabled={submitting}
-          onClick={handleGoogleClick}
+          onClick={handleGoogleSignIn}
           type="button"
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24">
@@ -229,22 +194,22 @@ export const AuthPage: React.FC = () => {
         </p>
       </div>
 
-      {/* Google OAuth Setup Guidance Modal (Shown when OAuth client ID needs owner setup) */}
+      {/* Google OAuth Setup Guidance Modal */}
       {showGoogleModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
             <div className="flex items-center gap-3 text-[#0B5ED7]">
               <Info className="h-6 w-6 shrink-0" />
-              <h3 className="font-bold text-lg text-slate-900">Google OAuth Setup</h3>
+              <h3 className="font-bold text-lg text-slate-900">Google OAuth Provider Setup</h3>
             </div>
             <p className="mt-3 text-xs text-slate-600 leading-relaxed">
-              Google OAuth requires genuine OAuth 2.0 Client credentials from the Google Cloud Console. To enable Google Sign-In for public customers:
+              Google OAuth is managed directly through your Supabase project (<code>iqsjxdzsfooaqekccaew</code>). To enable <strong>Continue with Google</strong>:
             </p>
             <ol className="mt-3 list-decimal list-inside space-y-1.5 text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200">
-              <li>Open Google Cloud Console &gt; APIs &amp; Services &gt; Credentials</li>
-              <li>Create an <strong>OAuth 2.0 Client ID</strong> (Web application)</li>
-              <li>Add authorized Javascript origin: <code>http://localhost:5173</code></li>
-              <li>Add Client ID to <code>.env</code> as <code>GOOGLE_CLIENT_ID</code></li>
+              <li>Open Supabase Dashboard &gt; Authentication &gt; Providers</li>
+              <li>Enable the <strong>Google</strong> provider toggle</li>
+              <li>Paste your Google Client ID and Client Secret from Google Cloud Console</li>
+              <li>Add the Supabase Callback URL to your Google Cloud authorized redirect URIs</li>
             </ol>
             <div className="mt-4 flex items-center gap-2 text-xs text-amber-700 bg-amber-50 p-2.5 rounded-lg border border-amber-200">
               <AlertCircle className="h-4 w-4 shrink-0" />
