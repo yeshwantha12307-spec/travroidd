@@ -93,7 +93,7 @@ export function App() {
               isOpen={planModalOpen}
               onClose={() => setPlanModalOpen(false)}
             />
-            <Toaster richColors position="top-center" />
+            <Toaster richColors position="top-right" closeButton />
           </div>
         </BrowserRouter>
       </BookingProvider>

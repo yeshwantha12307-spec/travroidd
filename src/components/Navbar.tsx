@@ -33,10 +33,10 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="hidden items-center gap-6 lg:flex">
+        <nav className="hidden items-center gap-3.5 xl:gap-5 lg:flex">
           <Link
             to="/"
-            className={`flex items-center gap-1.5 text-sm font-semibold transition-colors ${
+            className={`flex items-center gap-1.5 text-[13px] xl:text-sm font-semibold whitespace-nowrap transition-colors ${
               location.pathname === '/'
                 ? 'text-[#0B5ED7] border-b-2 border-[#0B5ED7] pb-0.5'
                 : 'text-slate-700 hover:text-[#0B5ED7]'
@@ -54,7 +54,7 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
           >
             <Link
               to="/destinations"
-              className={`flex items-center gap-1 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-1 text-[13px] xl:text-sm font-semibold whitespace-nowrap transition-colors ${
                 location.pathname.startsWith('/destinations')
                   ? 'text-[#0B5ED7]'
                   : 'text-slate-700 hover:text-[#0B5ED7]'
@@ -97,7 +97,7 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
           >
             <Link
               to="/budget-trips"
-              className={`flex items-center gap-1 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-1 text-[13px] xl:text-sm font-semibold whitespace-nowrap transition-colors ${
                 location.pathname === '/budget-trips'
                   ? 'text-[#0B5ED7]'
                   : 'text-slate-700 hover:text-[#0B5ED7]'
@@ -131,7 +131,7 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
 
           <Link
             to="/about"
-            className={`text-sm font-semibold transition-colors ${
+            className={`text-[13px] xl:text-sm font-semibold whitespace-nowrap transition-colors ${
               location.pathname === '/about'
                 ? 'text-[#0B5ED7]'
                 : 'text-slate-700 hover:text-[#0B5ED7]'
@@ -142,7 +142,7 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
 
           <Link
             to="/gallery"
-            className={`text-sm font-semibold transition-colors ${
+            className={`text-[13px] xl:text-sm font-semibold whitespace-nowrap transition-colors ${
               location.pathname === '/gallery'
                 ? 'text-[#0B5ED7]'
                 : 'text-slate-700 hover:text-[#0B5ED7]'
@@ -153,7 +153,7 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
 
           <Link
             to="/contact"
-            className={`text-sm font-semibold transition-colors ${
+            className={`text-[13px] xl:text-sm font-semibold whitespace-nowrap transition-colors ${
               location.pathname === '/contact'
                 ? 'text-[#0B5ED7]'
                 : 'text-slate-700 hover:text-[#0B5ED7]'
@@ -164,7 +164,7 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
 
           <Link
             to="/faq"
-            className={`text-sm font-semibold transition-colors ${
+            className={`text-[13px] xl:text-sm font-semibold whitespace-nowrap transition-colors ${
               location.pathname === '/faq'
                 ? 'text-[#0B5ED7]'
                 : 'text-slate-700 hover:text-[#0B5ED7]'
@@ -175,15 +175,15 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
         </nav>
 
         {/* Right Section: Location, Phone, CTA Button */}
-        <div className="hidden items-center gap-4 lg:flex">
-          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+        <div className="hidden items-center gap-3 xl:gap-4 lg:flex shrink-0">
+          <div className="hidden 2xl:flex items-center gap-1.5 text-xs font-medium text-slate-600 shrink-0">
             <MapPin className="h-4 w-4 text-[#0B5ED7]" />
             <span>Pondicherry</span>
           </div>
 
           <a
             href={`tel:${WHATSAPP_PHONE}`}
-            className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 transition-colors hover:text-[#0B5ED7]"
+            className="flex items-center gap-1.5 text-xs font-semibold text-slate-800 transition-colors hover:text-[#0B5ED7] shrink-0"
           >
             <Phone className="h-4 w-4 text-[#0B5ED7]" />
             <span>{WHATSAPP_PHONE}</span>
@@ -191,26 +191,26 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
 
           {/* User Account or Sign In */}
           {user ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 shrink-0">
               <Link
                 to="/my-bookings"
-                className="flex items-center gap-1 text-xs font-semibold text-slate-700 hover:text-[#0B5ED7] transition"
+                className="flex items-center gap-1 text-xs font-semibold text-slate-700 hover:text-[#0B5ED7] transition shrink-0"
                 title={`Signed in as ${user.email}`}
               >
                 <User className="h-4 w-4 text-[#0B5ED7]" />
-                <span className="max-w-[110px] truncate">{user.name || 'My Bookings'}</span>
+                <span className="max-w-[100px] truncate">{user.name || 'My Bookings'}</span>
               </Link>
               {isAdmin && (
                 <Link
                   to="/admin"
-                  className="flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-[#0B5ED7] border border-blue-200 hover:bg-blue-100"
+                  className="flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-[#0B5ED7] border border-blue-200 hover:bg-blue-100 shrink-0"
                 >
                   <ShieldCheck className="h-3.5 w-3.5" /> Admin
                 </Link>
               )}
               <button
                 onClick={() => signOut()}
-                className="p-1 text-slate-400 hover:text-red-600 transition"
+                className="p-1 text-slate-400 hover:text-red-600 transition shrink-0"
                 title="Sign out"
               >
                 <LogOut className="h-4 w-4" />
@@ -219,7 +219,7 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
           ) : (
             <Link
               to="/auth"
-              className="flex items-center gap-1.5 text-xs font-semibold text-[#0B5ED7] hover:text-[#094bb0] transition"
+              className="flex items-center gap-1.5 text-xs font-semibold text-[#0B5ED7] hover:text-[#094bb0] transition shrink-0"
             >
               <User className="h-4 w-4" />
               <span>Sign In</span>
@@ -227,21 +227,20 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
           )}
 
           {/* Plan Your Trip Button */}
-
           {onOpenPlanModal ? (
             <button
               onClick={onOpenPlanModal}
-              className="flex items-center gap-2 rounded-full bg-[#0B5ED7] px-5 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:bg-[#094bb0] hover:shadow-lg active:scale-95"
+              className="flex items-center gap-2 rounded-full bg-[#0B5ED7] px-4 xl:px-5 py-2 text-xs xl:text-sm font-bold text-white shadow-md transition-all hover:bg-[#094bb0] hover:shadow-lg active:scale-95 whitespace-nowrap shrink-0"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-3.5 w-3.5" />
               Plan Your Trip
             </button>
           ) : (
             <Link
               to="/book"
-              className="flex items-center gap-2 rounded-full bg-[#0B5ED7] px-5 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:bg-[#094bb0] hover:shadow-lg active:scale-95"
+              className="flex items-center gap-2 rounded-full bg-[#0B5ED7] px-4 xl:px-5 py-2 text-xs xl:text-sm font-bold text-white shadow-md transition-all hover:bg-[#094bb0] hover:shadow-lg active:scale-95 whitespace-nowrap shrink-0"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-3.5 w-3.5" />
               Plan Your Trip
             </Link>
           )}
