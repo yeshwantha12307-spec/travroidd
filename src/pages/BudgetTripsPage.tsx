@@ -79,7 +79,7 @@ export const BudgetTripsPage: React.FC = () => {
 
       {/* CATEGORY FILTER CIRCLES */}
       <section className="mx-auto w-full max-w-7xl px-4 pt-8 pb-4 sm:pt-10 sm:pb-6 sm:px-6">
-        <div className="flex items-center justify-start sm:justify-center gap-4 sm:gap-8 overflow-x-auto pb-3 pt-1 scrollbar-none px-2 -mx-2">
+        <div className="flex items-center justify-start sm:justify-center gap-4 sm:gap-8 overflow-x-auto pb-3 pt-1 scrollbar-none px-1">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const isActive = activeCategory === cat.name;
@@ -117,10 +117,10 @@ export const BudgetTripsPage: React.FC = () => {
           {displayedTrips.map((dest) => (
             <div
               key={dest.slug}
-              className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border border-slate-100"
+              className="group flex flex-col justify-between overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border border-slate-100"
             >
               {/* Card Image with Under ₹20,000 badge */}
-              <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-100 shrink-0">
                 <img
                   src={dest.image}
                   alt={dest.name}
@@ -133,14 +133,16 @@ export const BudgetTripsPage: React.FC = () => {
               </div>
 
               {/* Card Details */}
-              <div className="flex flex-1 flex-col justify-between p-3 sm:p-4">
-                <div className="text-left">
-                  <h3 className="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-[#0B5ED7] transition-colors truncate">
-                    {dest.name}
-                  </h3>
-                  <p className="mt-0.5 text-xs sm:text-sm font-extrabold text-[#0B5ED7]">
-                    {formatINR(dest.price)}
-                  </p>
+              <div className="flex flex-1 flex-col justify-between p-3.5 sm:p-4">
+                <div className="text-left min-w-0">
+                  <div className="flex items-center justify-between gap-1.5">
+                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-[#0B5ED7] transition-colors truncate">
+                      {dest.name}
+                    </h3>
+                    <span className="text-xs sm:text-sm font-extrabold text-[#0B5ED7] shrink-0 whitespace-nowrap">
+                      {formatINR(dest.price)}
+                    </span>
+                  </div>
                   <p className="mt-1 text-[11px] sm:text-xs text-slate-500 line-clamp-1">
                     {dest.budgetTripTagline || `${dest.duration} | ${dest.tagline}`}
                   </p>
@@ -150,7 +152,7 @@ export const BudgetTripsPage: React.FC = () => {
                 <div className="mt-3 sm:mt-4">
                   <Link
                     to={`/destinations/${dest.slug}`}
-                    className="flex min-h-[40px] w-full items-center justify-center rounded-full bg-[#0B5ED7] py-2 text-center text-xs font-bold text-white shadow-sm transition hover:bg-[#094bb0] active:scale-95"
+                    className="flex min-h-[44px] w-full items-center justify-center rounded-full bg-[#0B5ED7] py-2 text-center text-xs font-bold text-white shadow-sm transition hover:bg-[#094bb0] active:scale-95"
                   >
                     View Details
                   </Link>

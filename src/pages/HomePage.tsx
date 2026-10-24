@@ -134,7 +134,7 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
               className="flex flex-col gap-2.5 sm:gap-4 divide-y divide-slate-100 lg:divide-y-0 lg:flex-row lg:items-center lg:justify-between"
             >
               {/* Field 1: Where do you want to go? */}
-              <div className="flex items-center gap-3 flex-1 px-3 py-2 min-h-[48px]">
+              <div className="flex items-center gap-3 flex-1 px-3 py-2.5 min-h-[50px]">
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#EAF3FF] text-[#0B5ED7]">
                   <MapPin className="h-5 w-5" />
                 </div>
@@ -156,7 +156,7 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
               <div className="hidden h-10 w-px bg-slate-100 lg:block" />
 
               {/* Field 2: Travel Date */}
-              <div className="flex items-center gap-3 flex-1 px-3 py-2 min-h-[48px] pt-3 lg:pt-2">
+              <div className="flex items-center gap-3 flex-1 px-3 py-2.5 min-h-[50px]">
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#EAF3FF] text-[#0B5ED7]">
                   <Calendar className="h-5 w-5" />
                 </div>
@@ -179,7 +179,7 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
               <div className="hidden h-10 w-px bg-slate-100 lg:block" />
 
               {/* Field 3: Travelers */}
-              <div className="flex items-center gap-3 flex-1 px-3 py-2 min-h-[48px] pt-3 lg:pt-2">
+              <div className="flex items-center gap-3 flex-1 px-3 py-2.5 min-h-[50px]">
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#EAF3FF] text-[#0B5ED7]">
                   <Users className="h-5 w-5" />
                 </div>
@@ -204,7 +204,7 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
               <div className="hidden h-10 w-px bg-slate-100 lg:block" />
 
               {/* Field 4: Budget */}
-              <div className="flex items-center gap-3 flex-1 px-3 py-2 min-h-[48px] pt-3 lg:pt-2">
+              <div className="flex items-center gap-3 flex-1 px-3 py-2.5 min-h-[50px]">
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#EAF3FF] text-[#0B5ED7]">
                   <Wallet className="h-5 w-5" />
                 </div>
@@ -228,7 +228,7 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
               {/* Search Trips Button */}
               <button
                 type="submit"
-                className="flex items-center justify-center gap-2 rounded-full bg-[#0B5ED7] px-7 py-3.5 text-sm sm:text-xs font-bold text-white shadow-md transition hover:bg-[#094bb0] active:scale-95 shrink-0 w-full lg:w-auto min-h-[44px] mt-2 lg:mt-0"
+                className="flex items-center justify-center gap-2 rounded-full bg-[#0B5ED7] px-7 py-3 text-sm sm:text-xs font-bold text-white shadow-md transition hover:bg-[#094bb0] active:scale-95 shrink-0 w-full lg:w-auto min-h-[44px] cursor-pointer"
               >
                 <Search className="h-4 w-4" />
                 <span>Search Trips</span>
@@ -251,11 +251,11 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
                 <div className="grid h-11 w-11 sm:h-12 sm:w-12 shrink-0 place-items-center rounded-full bg-[#EAF3FF] text-[#0B5ED7]">
                   <Icon className="h-5 w-5" />
                 </div>
-                <div className="text-left">
-                  <h4 className="text-xs font-bold text-[#0A2A66] leading-snug">
+                <div className="text-left min-w-0">
+                  <h4 className="text-xs font-bold text-[#0A2A66] leading-snug truncate">
                     {vp.title}
                   </h4>
-                  <p className="text-[11px] text-[#5F7089] leading-tight">
+                  <p className="text-[11px] text-[#5F7089] leading-tight truncate">
                     {vp.desc}
                   </p>
                 </div>
@@ -281,15 +281,15 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
         </div>
 
         {/* 6 Destination Cards Grid */}
-        <div className="mt-6 sm:mt-8 grid grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+        <div className="mt-6 sm:mt-8 grid grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3.5 sm:gap-4">
           {popularDestinations.map((dest) => (
             <Link
               key={dest.slug}
               to={`/destinations/${dest.slug}`}
-              className="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border border-slate-100"
+              className="group relative flex flex-col justify-between overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border border-slate-100"
             >
               {/* Card Image */}
-              <div className="relative aspect-[16/11] w-full overflow-hidden bg-slate-100">
+              <div className="relative aspect-[16/11] w-full overflow-hidden bg-slate-100 shrink-0">
                 <img
                   src={dest.image}
                   alt={dest.name}
@@ -298,25 +298,25 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
                 />
               </div>
 
-              {/* Card Bottom Bar */}
-              <div className="flex flex-col min-[420px]:flex-row min-[420px]:items-center justify-between gap-1.5 p-2.5 sm:p-3">
+              {/* Card Bottom Content */}
+              <div className="flex flex-1 flex-col justify-between p-3">
                 <div className="text-left min-w-0">
                   <div className="flex items-center gap-1 text-slate-900">
                     <MapPin className="h-3.5 w-3.5 text-[#0B5ED7] shrink-0" />
                     <span className="font-extrabold text-xs sm:text-sm truncate">{dest.name}</span>
                   </div>
-                  <p className="text-[10px] text-slate-500 mt-0.5 truncate max-w-[130px]">
+                  <p className="text-[10px] text-slate-500 mt-0.5 truncate">
                     {dest.popularTagline ?? dest.tagline}
                   </p>
                 </div>
 
                 {/* Blue Rounded Price Pill */}
-                <div className="rounded-full bg-[#0B5ED7] px-2.5 py-1 sm:px-3 text-center text-white shadow-sm transition group-hover:bg-[#094bb0] shrink-0 self-start min-[420px]:self-auto">
-                  <span className="block text-[10px] sm:text-[11px] font-black leading-tight">
+                <div className="mt-2.5 rounded-full bg-[#0B5ED7] px-2.5 py-1 text-center text-white shadow-sm transition group-hover:bg-[#094bb0] flex items-center justify-between">
+                  <span className="text-[10px] sm:text-[11px] font-black leading-tight">
                     {formatINR(dest.popularPrice ?? dest.price)}
                   </span>
-                  <span className="block text-[8px] sm:text-[9px] font-normal opacity-90 leading-none">
-                    / per person
+                  <span className="text-[8px] sm:text-[9px] font-normal opacity-90 leading-none">
+                    / person
                   </span>
                 </div>
               </div>

@@ -6,6 +6,25 @@
   --font-brand: "Poppins", sans-serif;
   --font-script: "Kaushan Script", "Caveat", cursive, sans-serif;
   --font-marker: "Caveat Brush", cursive, sans-serif;
+
+  --color-primary: #0B5ED7;
+  --color-primary-hover: #094bb0;
+  --color-primary-foreground: #FFFFFF;
+  --color-secondary: #F0F6FF;
+  --color-secondary-foreground: #0A2A66;
+  --color-accent: #EAF3FF;
+  --color-accent-foreground: #0B5ED7;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #0A2A66;
+  --color-whatsapp: #25D366;
+  --color-navy: #0A2A66;
+  --color-muted-foreground: #5F7089;
+  --color-border: #E2E8F0;
+  --color-input: #E2E8F0;
+  --color-ring: #0B5ED7;
+
+  --shadow-card: 0 2px 14px -2px rgba(10, 42, 102, 0.08);
+  --shadow-elegant: 0 10px 25px -5px rgba(11, 94, 215, 0.15), 0 8px 10px -6px rgba(11, 94, 215, 0.1);
 }
 
 :root {

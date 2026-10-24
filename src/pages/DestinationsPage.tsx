@@ -197,18 +197,20 @@ export const DestinationsPage: React.FC = () => {
               </div>
 
               {/* Content */}
-              <div className="p-3 sm:p-4">
-                <div className="flex flex-col min-[420px]:flex-row min-[420px]:items-center justify-between gap-1">
-                  <h3 className="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-[#0B5ED7] transition-colors truncate">
-                    {dest.name}
-                  </h3>
-                  <span className="text-xs sm:text-sm font-extrabold text-[#0B5ED7] shrink-0">
-                    {formatINR(dest.price)}
-                  </span>
+              <div className="flex flex-1 flex-col justify-between p-3.5 sm:p-4">
+                <div>
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-[#0B5ED7] transition-colors truncate">
+                      {dest.name}
+                    </h3>
+                    <span className="text-xs sm:text-sm font-extrabold text-[#0B5ED7] shrink-0 whitespace-nowrap">
+                      {formatINR(dest.price)}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[11px] sm:text-xs text-slate-500 line-clamp-1">
+                    {dest.topDestinationTagline || `${dest.duration} | ${dest.category} | ${dest.tagline}`}
+                  </p>
                 </div>
-                <p className="mt-1 text-[11px] sm:text-xs text-slate-500 line-clamp-1">
-                  {dest.topDestinationTagline || `${dest.duration} | ${dest.category} | ${dest.tagline}`}
-                </p>
               </div>
             </Link>
           ))}

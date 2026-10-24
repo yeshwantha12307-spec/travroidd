@@ -31,16 +31,16 @@ export const Logo: React.FC<{
       />
 
       {/* Brand Typography */}
-      <div className="flex flex-col text-left leading-none">
+      <div className="flex flex-col text-left leading-none justify-center">
         <span
-          className={`font-brand ${textSizeClass} font-bold tracking-tight ${
+          className={`font-brand ${textSizeClass} font-bold tracking-tight leading-tight ${
             isLight ? 'text-white' : 'text-[#0A2A66]'
           }`}
         >
           Travroidd
         </span>
         <span
-          className={`text-[8px] sm:text-[9.5px] font-medium tracking-[0.1em] sm:tracking-[0.12em] uppercase mt-0.5 truncate max-w-[130px] sm:max-w-none ${
+          className={`text-[8px] sm:text-[9.5px] font-semibold tracking-[0.08em] sm:tracking-[0.12em] uppercase mt-0.5 whitespace-nowrap ${
             isLight ? 'text-blue-200' : 'text-[#0B5ED7]'
           }`}
         >

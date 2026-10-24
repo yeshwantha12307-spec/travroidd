@@ -179,15 +179,17 @@ export const PlanTripModal: React.FC<{
                 <button
                   type="button"
                   onClick={() => setTravelers(Math.max(1, travelers - 1))}
-                  className="h-7 w-7 rounded-full bg-white text-slate-800 shadow text-sm font-bold"
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-slate-800 shadow text-sm font-bold transition hover:bg-slate-100 active:scale-95 cursor-pointer"
+                  aria-label="Decrease travelers"
                 >
                   -
                 </button>
-                <span className="font-bold text-sm">{travelers} Adults</span>
+                <span className="font-bold text-sm min-w-[70px] text-center">{travelers} Adults</span>
                 <button
                   type="button"
                   onClick={() => setTravelers(travelers + 1)}
-                  className="h-7 w-7 rounded-full bg-white text-slate-800 shadow text-sm font-bold"
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-slate-800 shadow text-sm font-bold transition hover:bg-slate-100 active:scale-95 cursor-pointer"
+                  aria-label="Increase travelers"
                 >
                   +
                 </button>
