@@ -20,112 +20,112 @@ export const GalleryPage: React.FC = () => {
       title: 'Tropical Beach Sunsets',
       category: 'Beach',
       location: 'Goa',
-      image: '/destinations/Goa/Goa Tropical Beach Escape-3.png',
+      image: '/assets/destinations/Goa/Goa Tropical Beach Escape-3.png',
     },
     {
       id: 2,
       title: 'Snowy Himalayan Peaks',
       category: 'Hills',
       location: 'Manali, Himachal Pradesh',
-      image: '/destinations/Manali/Snowy Himalayan Valley Resort.png',
+      image: '/assets/destinations/Manali/Snowy Himalayan Valley Resort.png',
     },
     {
       id: 3,
       title: 'Ancient Stone Carvings',
       category: 'Heritage',
       location: 'Hampi, Karnataka',
-      image: '/destinations/hampi/wp7664994.jpg',
+      image: '/assets/destinations/hampi/wp7664994.jpg',
     },
     {
       id: 4,
       title: 'Coffee Plantations & Hills',
       category: 'Nature',
       location: 'Coorg, Karnataka',
-      image: '/destinations/coorg/COORG.jpg',
+      image: '/assets/destinations/coorg/COORG.jpg',
     },
     {
       id: 5,
       title: 'Turquoise Waters of Andaman',
       category: 'Beach',
       location: 'Havelock, Andaman',
-      image: '/destinations/Andaman/wp5296530.jpg',
+      image: '/assets/destinations/Andaman/wp5296530.jpg',
     },
     {
       id: 6,
       title: 'Royal Sandstone Fort',
       category: 'Heritage',
       location: 'Jaisalmer, Rajasthan',
-      image: '/destinations/Rajasthan/wp4021285.jpg',
+      image: '/assets/destinations/Rajasthan/wp4021285.jpg',
     },
     {
       id: 7,
       title: 'Misty Tea Hills',
       category: 'Hills',
       location: 'Munnar, Kerala',
-      image: '/destinations/Munnar/Misty Mountain Tea Plantation Panorama.png',
+      image: '/assets/destinations/Munnar/Misty Mountain Tea Plantation Panorama.png',
     },
     {
       id: 8,
       title: 'Sunset River & Shacks',
       category: 'Beach',
       location: 'Goa',
-      image: '/destinations/Goa/goa.jpg',
+      image: '/assets/destinations/Goa/Goa Tropical Beach Escape-3.png',
     },
     {
       id: 9,
       title: 'Serene Himalayan Valley',
       category: 'Adventure',
       location: 'Srinagar, Kashmir',
-      image: '/destinations/Kashmir/VQN2w2Z.jpg',
+      image: '/assets/destinations/Kashmir/VQN2w2Z.jpg',
     },
     {
       id: 10,
       title: 'Backwaters & Palm Groves',
       category: 'Nature',
       location: 'Alleppey, Kerala',
-      image: '/destinations/Kerala/wp7877523.jpg',
+      image: '/assets/destinations/Kerala/wp7877523.jpg',
     },
     {
       id: 11,
       title: 'Lake Palace Heritage',
       category: 'Heritage',
       location: 'Udaipur, Rajasthan',
-      image: '/destinations/Udaipur/wp6736569.jpg',
+      image: '/assets/destinations/Udaipur/wp6736569.jpg',
     },
     {
       id: 12,
       title: 'Queen of Hills Vista',
       category: 'Hills',
       location: 'Ooty, Tamil Nadu',
-      image: '/destinations/Ooty/Vibrant Hill Station Lake Panorama.png',
+      image: '/assets/destinations/Ooty/Vibrant Hill Station Lake Panorama.png',
     },
     {
       id: 13,
       title: 'Misty Pine Forest & Lake',
       category: 'Nature',
       location: 'Kodaikanal, Tamil Nadu',
-      image: '/destinations/kodaikanal/kodaikanal.jpg',
+      image: '/assets/destinations/kodaikanal/kodaikanal.jpg',
     },
     {
       id: 14,
       title: 'Historic Sea Temple',
       category: 'Heritage',
       location: 'Rameswaram, Tamil Nadu',
-      image: '/destinations/Rameshwaram/wp9920427.jpg',
+      image: '/assets/destinations/Rameshwaram/wp9920427.jpg',
     },
     {
       id: 15,
       title: 'Ocean Sunrise & Monument',
       category: 'Beach',
       location: 'Kanyakumari, Tamil Nadu',
-      image: '/destinations/Kanyakumari/wp7626737.jpg',
+      image: '/assets/destinations/Kanyakumari/wp7626737.jpg',
     },
     {
       id: 16,
       title: 'Himalayan Tea Estates',
       category: 'Hills',
       location: 'Darjeeling, West Bengal',
-      image: '/destinations/Darjeeling/wp6191488.jpg',
+      image: '/assets/destinations/Darjeeling/wp6191488.jpg',
     },
   ];
 
@@ -139,7 +139,7 @@ export const GalleryPage: React.FC = () => {
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[170px] sm:min-h-[220px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img
-          src="/destinations/Manali/Snowy Himalayan Valley Resort.png"
+          src="/assets/destinations/Manali/Snowy Himalayan Valley Resort.png"
           alt="Mountains and blue waters"
           className="absolute inset-0 h-full w-full object-cover opacity-60"
         />

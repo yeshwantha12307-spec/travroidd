@@ -81,7 +81,7 @@ export const DestinationsPage: React.FC = () => {
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[260px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img
-          src="/destinations/Manali/Snowy Himalayan Valley Resort.png"
+          src="/assets/destinations/Manali/Snowy Himalayan Valley Resort.png"
           alt="Scenic Mountain Peaks"
           className="absolute inset-0 h-full w-full object-cover opacity-60"
         />

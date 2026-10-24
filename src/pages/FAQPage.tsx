@@ -55,7 +55,7 @@ export const FAQPage: React.FC = () => {
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[170px] sm:min-h-[220px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img
-          src="/destinations/Munnar/Misty Mountain Tea Plantation Panorama.png"
+          src="/assets/destinations/Munnar/Misty Mountain Tea Plantation Panorama.png"
           alt="Dark blue foliage and mountains"
           className="absolute inset-0 h-full w-full object-cover opacity-60"
         />

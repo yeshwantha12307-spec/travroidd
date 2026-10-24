@@ -45,7 +45,7 @@ interface BookingContextType {
 
 const BookingContext = createContext<BookingContextType | null>(null);
 
-const DESTINATIONS_KEY = 'travroidd_destinations';
+const DESTINATIONS_KEY = 'travroidd_destinations_v5';
 const BOOKINGS_KEY = 'travroidd_bookings';
 const ENQUIRIES_KEY = 'travroidd_enquiries';
 const LIKES_KEY = 'travroidd_likes';
@@ -55,7 +55,28 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [destinations, setDestinations] = useState<Destination[]>(() => {
     try {
       const stored = localStorage.getItem(DESTINATIONS_KEY);
-      return stored ? JSON.parse(stored) : INITIAL_DESTINATIONS;
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Reconcile with INITIAL_DESTINATIONS so verified local image paths always take effect
+          return INITIAL_DESTINATIONS.map((initial) => {
+            const existing = parsed.find((p: Destination) => p.slug === initial.slug);
+            return existing
+              ? {
+                  ...existing,
+                  image: initial.image,
+                  galleryImages: initial.galleryImages,
+                  price: initial.price,
+                  popularPrice: initial.popularPrice,
+                  popularTagline: initial.popularTagline,
+                  topDestinationTagline: initial.topDestinationTagline,
+                  budgetTripTagline: initial.budgetTripTagline,
+                }
+              : initial;
+          });
+        }
+      }
+      return INITIAL_DESTINATIONS;
     } catch {
       return INITIAL_DESTINATIONS;
     }

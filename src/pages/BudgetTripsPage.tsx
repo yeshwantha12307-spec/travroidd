@@ -61,7 +61,7 @@ export const BudgetTripsPage: React.FC = () => {
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[260px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img
-          src="/destinations/Andaman/wp5296530.jpg"
+          src="/assets/destinations/Andaman/wp5296530.jpg"
           alt="Emerald lake and boat"
           className="absolute inset-0 h-full w-full object-cover opacity-60"
         />

@@ -69,7 +69,7 @@ export const ContactPage: React.FC = () => {
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[170px] sm:min-h-[220px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img
-          src="/destinations/Kanyakumari/wp7626737.jpg"
+          src="/assets/destinations/Kanyakumari/wp7626737.jpg"
           alt="Tropical ocean and island rocks"
           className="absolute inset-0 h-full w-full object-cover opacity-60"
         />

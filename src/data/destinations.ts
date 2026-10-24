@@ -62,10 +62,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     tagline: 'Beach Paradise',
     topDestinationTagline: '3 Days | Beach | Adventure',
     budgetTripTagline: '3 Days | Beach & Fun',
-    image: '/destinations/Goa/Goa Tropical Beach Escape-3.png',
+    image: '/assets/destinations/Goa/Goa Tropical Beach Escape-3.png',
     galleryImages: [
-      '/destinations/Goa/Goa Tropical Beach Escape-3.png',
-      '/destinations/Goa/goa.jpg',
+      '/assets/destinations/Goa/Goa Tropical Beach Escape-3.png',
     ],
     description:
       'Golden beaches, Portuguese architecture, vibrant shacks and mesmerizing sunsets. Goa is India’s favourite escape for relaxation and adventure.',
@@ -110,9 +109,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '4 Days',
     tagline: 'Adventure & Nature',
     topDestinationTagline: '4 Days | Mountains | Adventure',
-    image: '/destinations/Manali/Snowy Himalayan Valley Resort.png',
+    image: '/assets/destinations/Manali/Snowy Himalayan Valley Resort.png',
     galleryImages: [
-      '/destinations/Manali/Snowy Himalayan Valley Resort.png',
+      '/assets/destinations/Manali/Snowy Himalayan Valley Resort.png',
     ],
     description:
       'Towering snow peaks, pine valleys and gushing Beas river. Manali offers thrilling adventure sports, serene cafés and Himalayan charm.',
@@ -162,9 +161,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '4 Days',
     tagline: 'Tea Gardens & Hills',
     budgetTripTagline: '4 Days | Tea Gardens',
-    image: '/destinations/Munnar/Misty Mountain Tea Plantation Panorama.png',
+    image: '/assets/destinations/Munnar/Misty Mountain Tea Plantation Panorama.png',
     galleryImages: [
-      '/destinations/Munnar/Misty Mountain Tea Plantation Panorama.png',
+      '/assets/destinations/Munnar/Misty Mountain Tea Plantation Panorama.png',
     ],
     description:
       'Rolling carpet of endless tea plantations, misty mountain air, waterfalls and exotic wildlife. Munnar is South India’s crown hill station.',
@@ -214,9 +213,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '4 Days',
     tagline: 'Queen of Hills',
     budgetTripTagline: '4 Days | Hills & Nature',
-    image: '/destinations/Ooty/Vibrant Hill Station Lake Panorama.png',
+    image: '/assets/destinations/Ooty/Vibrant Hill Station Lake Panorama.png',
     galleryImages: [
-      '/destinations/Ooty/Vibrant Hill Station Lake Panorama.png',
+      '/assets/destinations/Ooty/Vibrant Hill Station Lake Panorama.png',
     ],
     description:
       'Colonial charm, Nilgiri Toy Train, botanical gardens and pine forests nestled in the blue mountains of Tamil Nadu.',
@@ -266,9 +265,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '3 Days',
     tagline: 'Princess of Hills',
     budgetTripTagline: '3 Days | Lakes & View',
-    image: '/destinations/kodaikanal/kodaikanal.jpg',
+    image: '/assets/destinations/kodaikanal/kodaikanal.jpg',
     galleryImages: [
-      '/destinations/kodaikanal/kodaikanal.jpg',
+      '/assets/destinations/kodaikanal/kodaikanal.jpg',
     ],
     description:
       'Star-shaped lake, misty cliff trails, pine forests and pleasant temperatures all year round in the Palani hills.',
@@ -313,9 +312,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '5 Days',
     tagline: 'Island Paradise',
     topDestinationTagline: '5 Days | Islands | Beach',
-    image: '/destinations/Andaman/wp5296530.jpg',
+    image: '/assets/destinations/Andaman/wp5296530.jpg',
     galleryImages: [
-      '/destinations/Andaman/wp5296530.jpg',
+      '/assets/destinations/Andaman/wp5296530.jpg',
     ],
     description:
       'Crystal clear turquoise waters, Radhanagar white sand beach, snorkeling with coral reefs and historical Cellular Jail.',
@@ -368,9 +367,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '5 Days / 4 Nights',
     tagline: 'Backwaters & Nature',
     topDestinationTagline: '5 Days | Backwaters | Nature',
-    image: '/destinations/Kerala/wp7877523.jpg',
+    image: '/assets/destinations/Kerala/wp7877523.jpg',
     galleryImages: [
-      '/destinations/Kerala/wp7877523.jpg',
+      '/assets/destinations/Kerala/wp7877523.jpg',
     ],
     description:
       'Glide through tranquil palm-fringed canals in Alleppey, stay in a houseboat and taste authentic South Indian delicacies.',
@@ -423,9 +422,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '3 Days',
     tagline: 'Heritage | Culture',
     topDestinationTagline: '3 Days | Heritage | Culture',
-    image: '/destinations/Udaipur/wp6736569.jpg',
+    image: '/assets/destinations/Udaipur/wp6736569.jpg',
     galleryImages: [
-      '/destinations/Udaipur/wp6736569.jpg',
+      '/assets/destinations/Udaipur/wp6736569.jpg',
     ],
     description:
       'Royal palaces, serene lakes, Rajput royal heritage and romantic sunsets over Lake Pichola in Rajasthan.',
@@ -468,9 +467,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '5 Days / 4 Nights',
     tagline: 'Forts & Culture',
     topDestinationTagline: '3 Days | Forts | Culture',
-    image: '/destinations/Rajasthan/wp4021285.jpg',
+    image: '/assets/destinations/Rajasthan/wp4021285.jpg',
     galleryImages: [
-      '/destinations/Rajasthan/wp4021285.jpg',
+      '/assets/destinations/Rajasthan/wp4021285.jpg',
     ],
     description:
       'Imposing sandstone forts, Thar desert camel safari, palaces of Jaipur and Jodhpur, and royal Rajasthani hospitality.',
@@ -523,10 +522,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '5 Days / 4 Nights',
     tagline: 'Mountains & Nature',
     topDestinationTagline: '5 Days | Mountains | Nature',
-    image: '/destinations/Kashmir/VQN2w2Z.jpg',
+    image: '/assets/destinations/Kashmir/VQN2w2Z.jpg',
     galleryImages: [
-      '/destinations/Kashmir/VQN2w2Z.jpg',
-      '/destinations/Kashmir/kashmir.jpg',
+      '/assets/destinations/Kashmir/VQN2w2Z.jpg',
     ],
     description:
       'Shikara rides on Dal Lake, snow meadows of Gulmarg, and valleys of Pahalgam. Kashmir is beauty in every season.',
@@ -579,9 +577,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '4 Days / 3 Nights',
     tagline: 'Hills | Tea Gardens',
     topDestinationTagline: '4 Days | Hills | Tea Gardens',
-    image: '/destinations/Darjeeling/wp6191488.jpg',
+    image: '/assets/destinations/Darjeeling/wp6191488.jpg',
     galleryImages: [
-      '/destinations/Darjeeling/wp6191488.jpg',
+      '/assets/destinations/Darjeeling/wp6191488.jpg',
     ],
     description:
       'Catch sunrise over Mount Kanchenjunga from Tiger Hill, ride the heritage Himalayan toy train, and sip world-renowned Darjeeling tea.',
@@ -629,9 +627,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '3 Days / 2 Nights',
     tagline: 'Temple & Sea',
     budgetTripTagline: '3 Days | Temple & Sea',
-    image: '/destinations/Rameshwaram/wp9920427.jpg',
+    image: '/assets/destinations/Rameshwaram/wp9920427.jpg',
     galleryImages: [
-      '/destinations/Rameshwaram/wp9920427.jpg',
+      '/assets/destinations/Rameshwaram/wp9920427.jpg',
     ],
     description:
       'Sacred island connected by the majestic Pamban Sea Bridge, holy 22 theerthams, and ghost town of Dhanushkodi bordering Sri Lanka.',
@@ -674,9 +672,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '3 Days',
     tagline: 'Sunrise & Beach',
     budgetTripTagline: '3 Days | Sunrise & Beach',
-    image: '/destinations/Kanyakumari/wp7626737.jpg',
+    image: '/assets/destinations/Kanyakumari/wp7626737.jpg',
     galleryImages: [
-      '/destinations/Kanyakumari/wp7626737.jpg',
+      '/assets/destinations/Kanyakumari/wp7626737.jpg',
     ],
     description:
       'The southernmost tip of mainland India where three oceans meet. Witness simultaneous sunset and moonrise over the sea.',
@@ -719,9 +717,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '3 Days',
     tagline: 'History & Culture',
     budgetTripTagline: '3 Days | History & Culture',
-    image: '/destinations/hampi/wp7664994.jpg',
+    image: '/assets/destinations/hampi/wp7664994.jpg',
     galleryImages: [
-      '/destinations/hampi/wp7664994.jpg',
+      '/assets/destinations/hampi/wp7664994.jpg',
     ],
     description:
       'UNESCO World Heritage boulder landscape and ruins of the glorious Vijayanagara Empire with iconic stone chariot and coracle river rides.',
@@ -764,9 +762,9 @@ export const INITIAL_DESTINATIONS: Destination[] = [
     duration: '3 Days / 2 Nights',
     tagline: 'Coffee & Nature',
     budgetTripTagline: '3 Days | Coffee & Nature',
-    image: '/destinations/coorg/COORG.jpg',
+    image: '/assets/destinations/coorg/COORG.jpg',
     galleryImages: [
-      '/destinations/coorg/COORG.jpg',
+      '/assets/destinations/coorg/COORG.jpg',
     ],
     description:
       'The Scotland of India with lush green aromatic coffee plantations, gushing Abbey falls, elephant camps and misty peaks.',

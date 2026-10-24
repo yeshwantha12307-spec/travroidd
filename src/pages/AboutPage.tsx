@@ -63,7 +63,7 @@ export const AboutPage: React.FC = () => {
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[170px] sm:min-h-[220px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img
-          src="/destinations/Manali/Snowy Himalayan Valley Resort.png"
+          src="/assets/destinations/Manali/Snowy Himalayan Valley Resort.png"
           alt="Mountains and valleys"
           className="absolute inset-0 h-full w-full object-cover opacity-60"
         />
@@ -126,7 +126,7 @@ export const AboutPage: React.FC = () => {
           <div className="relative">
             <div className="relative w-full aspect-[4/3] max-w-lg overflow-hidden rounded-2xl shadow-xl bg-slate-100 border border-slate-100">
               <img
-                src="/destinations/Ooty/Vibrant Hill Station Lake Panorama.png"
+                src="/assets/destinations/Ooty/Vibrant Hill Station Lake Panorama.png"
                 alt="Scenic landscape with mountains, valley and water"
                 className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
               />

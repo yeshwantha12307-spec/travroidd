@@ -36,7 +36,7 @@ export const AdminPage: React.FC = () => {
     price: 6999,
     duration: '3 Nights / 4 Days',
     tagline: '',
-    image: '/assets/kashmir-CYJeKKxI.jpg',
+    image: '/assets/destinations/Kashmir/VQN2w2Z.jpg',
     description: '',
     highlights: ['Scenic sightseeing', 'Local culture tour', 'Comfort stay'],
     itinerary: [
