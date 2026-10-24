@@ -44,7 +44,7 @@ export const DestinationDetailPage: React.FC = () => {
   return (
     <div className="flex flex-col bg-slate-50 min-h-screen pb-20">
       {/* HERO BANNER */}
-      <section className="relative h-[340px] sm:h-[420px] w-full overflow-hidden bg-slate-900">
+      <section className="relative h-[260px] sm:h-[340px] md:h-[420px] w-full overflow-hidden bg-slate-900">
         <img
           src={dest.image}
           alt={dest.name}
@@ -53,19 +53,21 @@ export const DestinationDetailPage: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
 
         {/* Top Left Badge: Under ₹22,000 */}
-        <div className="absolute left-6 top-6 z-10">
-          <div className="rounded-full bg-[#0B5ED7] px-4 py-1.5 text-xs font-bold text-white shadow-lg border border-white/20">
+        <div className="absolute left-3 top-3 sm:left-6 sm:top-6 z-10">
+          <div className="rounded-full bg-[#0B5ED7] px-3 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold text-white shadow-lg border border-white/20">
             {dest.budgetCap || 'Under ₹22,000'}
           </div>
         </div>
 
         {/* Back Link */}
-        <div className="absolute right-6 top-6 z-10">
+        <div className="absolute right-3 top-3 sm:right-6 sm:top-6 z-10">
           <Link
             to="/destinations"
-            className="flex items-center gap-1.5 rounded-full bg-white/80 px-4 py-1.5 text-xs font-bold text-slate-800 shadow backdrop-blur transition hover:bg-white"
+            className="flex items-center gap-1.5 rounded-full bg-white/90 px-3 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold text-slate-800 shadow backdrop-blur transition hover:bg-white active:scale-95"
           >
-            <ArrowLeft className="h-3.5 w-3.5" /> Back to Destinations
+            <ArrowLeft className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Back to Destinations</span>
+            <span className="sm:hidden">Back</span>
           </Link>
         </div>
 
@@ -82,40 +84,40 @@ export const DestinationDetailPage: React.FC = () => {
       </section>
 
       {/* MAIN WHITE CARD CONTAINER */}
-      <div className="mx-auto -mt-16 w-full max-w-6xl px-4 sm:px-6 z-20">
-        <div className="rounded-3xl bg-white p-6 shadow-xl sm:p-10 border border-slate-100">
+      <div className="mx-auto -mt-10 sm:-mt-16 w-full max-w-6xl px-3 sm:px-6 z-20">
+        <div className="rounded-3xl bg-white p-4 sm:p-10 shadow-xl border border-slate-100">
           {/* Header Title & Badges */}
-          <div className="border-b border-slate-100 pb-6">
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-[#0A2A66] tracking-tight">
+          <div className="border-b border-slate-100 pb-5 sm:pb-6">
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-extrabold text-[#0A2A66] tracking-tight">
               {dest.title || `${dest.name} – Beach Paradise`}
             </h1>
 
             {/* Meta badges with icons */}
-            <div className="mt-4 flex flex-wrap items-center gap-6 text-xs font-semibold text-slate-700">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-[#0B5ED7]" />
+            <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-3 sm:gap-6 text-xs font-semibold text-slate-700">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Calendar className="h-4 w-4 text-[#0B5ED7] shrink-0" />
                 <span>{dest.duration}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Palmtree className="h-4 w-4 text-[#0B5ED7]" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Palmtree className="h-4 w-4 text-[#0B5ED7] shrink-0" />
                 <span>{dest.category}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Wallet className="h-4 w-4 text-[#0B5ED7]" />
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <Wallet className="h-4 w-4 text-[#0B5ED7] shrink-0" />
                 <span>Budget: {formatINR(dest.price)}</span>
               </div>
             </div>
           </div>
 
           {/* 2-Column: Trip Highlights (Left) & Pricing Card (Right) */}
-          <div className="grid gap-8 py-8 md:grid-cols-3">
+          <div className="grid gap-6 sm:gap-8 py-6 sm:py-8 md:grid-cols-3">
             {/* Left: Highlights */}
             <div className="md:col-span-2">
-              <h2 className="text-lg font-bold text-[#0A2A66]">Trip Highlights</h2>
-              <ul className="mt-4 space-y-3">
+              <h2 className="text-base sm:text-lg font-bold text-[#0A2A66]">Trip Highlights</h2>
+              <ul className="mt-3 sm:mt-4 space-y-2.5 sm:space-y-3">
                 {dest.highlights.map((hl) => (
-                  <li key={hl} className="flex items-center gap-2.5 text-sm text-[#0B2447]">
-                    <Check className="h-4 w-4 text-[#0B5ED7] shrink-0" strokeWidth={3} />
+                  <li key={hl} className="flex items-start gap-2.5 text-xs sm:text-sm text-[#0B2447]">
+                    <Check className="h-4 w-4 text-[#0B5ED7] shrink-0 mt-0.5" strokeWidth={3} />
                     <span>{hl}</span>
                   </li>
                 ))}
@@ -123,9 +125,9 @@ export const DestinationDetailPage: React.FC = () => {
             </div>
 
             {/* Right: Pricing & CTA Box */}
-            <div className="rounded-2xl border border-[#E3ECF7] bg-[#EAF3FF]/40 p-6 shadow-sm flex flex-col justify-center">
+            <div className="rounded-2xl border border-[#E3ECF7] bg-[#EAF3FF]/40 p-5 sm:p-6 shadow-sm flex flex-col justify-center">
               <div className="text-center sm:text-left">
-                <p className="text-3xl font-black text-[#0B5ED7]">
+                <p className="text-2xl sm:text-3xl font-black text-[#0B5ED7]">
                   {formatINR(dest.price)}{' '}
                   <span className="text-xs font-semibold text-[#5F7089]">
                     / per person
@@ -133,17 +135,17 @@ export const DestinationDetailPage: React.FC = () => {
                 </p>
               </div>
 
-              <div className="mt-6 flex flex-col gap-3">
+              <div className="mt-5 sm:mt-6 flex flex-col gap-2.5 sm:gap-3">
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="flex items-center justify-center w-full rounded-full bg-[#0B5ED7] py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#094bb2] active:scale-95 cursor-pointer"
+                  className="flex min-h-[44px] items-center justify-center w-full rounded-full bg-[#0B5ED7] py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#094bb2] active:scale-95 cursor-pointer"
                 >
                   Book Now
                 </button>
 
                 <button
                   onClick={handleWhatsAppEnquiry}
-                  className="flex items-center justify-center w-full rounded-full border-2 border-[#0B5ED7] bg-white py-2.5 text-sm font-bold text-[#0B5ED7] transition hover:bg-blue-50 active:scale-95 cursor-pointer"
+                  className="flex min-h-[44px] items-center justify-center w-full rounded-full border-2 border-[#0B5ED7] bg-white py-2.5 text-sm font-bold text-[#0B5ED7] transition hover:bg-blue-50 active:scale-95 cursor-pointer"
                 >
                   Enquire Now
                 </button>
@@ -152,15 +154,15 @@ export const DestinationDetailPage: React.FC = () => {
           </div>
 
           {/* Bottom Grid: Itinerary (Left) & Gallery (Right) */}
-          <div className="grid gap-8 border-t border-slate-100 pt-8 lg:grid-cols-2">
+          <div className="grid gap-6 sm:gap-8 border-t border-slate-100 pt-6 sm:pt-8 lg:grid-cols-2">
             {/* Itinerary */}
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Itinerary</h2>
-              <div className="mt-5 space-y-3">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900">Itinerary</h2>
+              <div className="mt-4 sm:mt-5 space-y-2.5 sm:space-y-3">
                 {dest.itinerary.map((item) => (
                   <div
                     key={item.day}
-                    className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3.5 shadow-sm"
+                    className="flex items-center gap-3 rounded-xl border border-slate-100 bg-white p-3 sm:p-3.5 shadow-sm"
                   >
                     <CircleDot className="h-4 w-4 text-[#0B5ED7] shrink-0" />
                     <p className="text-xs text-slate-800">
@@ -178,8 +180,8 @@ export const DestinationDetailPage: React.FC = () => {
 
             {/* Gallery */}
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Gallery</h2>
-              <div className={`mt-5 grid gap-3 ${dest.galleryImages && dest.galleryImages.length === 1 ? 'grid-cols-1' : dest.galleryImages && dest.galleryImages.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+              <h2 className="text-base sm:text-lg font-bold text-slate-900">Gallery</h2>
+              <div className="mt-4 sm:mt-5 grid grid-cols-2 min-[440px]:grid-cols-3 gap-2.5 sm:gap-3">
                 {(dest.galleryImages && dest.galleryImages.length > 0 ? dest.galleryImages : [dest.image]).map(
                   (imgSrc, idx) => (
                     <div

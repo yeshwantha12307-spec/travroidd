@@ -156,13 +156,13 @@ export const GalleryPage: React.FC = () => {
       </section>
 
       {/* FILTER BUTTONS */}
-      <section className="mx-auto w-full max-w-7xl px-4 pt-10 pb-6 sm:px-6">
-        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
+      <section className="mx-auto w-full max-w-7xl px-4 pt-8 pb-4 sm:pt-10 sm:pb-6 sm:px-6">
+        <div className="flex items-center justify-start sm:justify-center gap-2 sm:gap-3 overflow-x-auto pb-2 scrollbar-none px-2 -mx-2">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
-              className={`rounded-full px-5 py-2 text-xs font-bold transition-all cursor-pointer shadow-sm ${
+              className={`min-h-[38px] rounded-full px-4 sm:px-5 py-2 text-xs font-bold transition-all cursor-pointer shadow-sm shrink-0 active:scale-95 ${
                 activeCategory === cat
                   ? 'bg-[#0B5ED7] text-white shadow-md scale-105'
                   : 'bg-white text-[#0B2447] hover:bg-slate-100 hover:text-[#0B5ED7] border border-[#E3ECF7]'
@@ -175,8 +175,8 @@ export const GalleryPage: React.FC = () => {
       </section>
 
       {/* PHOTO GRID */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+      <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8 sm:px-6">
+        <div className="grid grid-cols-1 min-[420px]:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6">
           {filteredItems.map((item) => (
             <div
               key={item.id}
@@ -189,12 +189,13 @@ export const GalleryPage: React.FC = () => {
                 loading="lazy"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              <div className="absolute inset-x-0 bottom-0 p-4 text-white transform translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-sky-300">
+              {/* Overlay with title: visible on mobile, hover on desktop */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent opacity-90 sm:opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4 text-white transform sm:translate-y-2 opacity-100 sm:opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-sky-300 block truncate">
                   {item.category} • {item.location}
                 </span>
-                <h3 className="text-sm font-bold text-white">{item.title}</h3>
+                <h3 className="text-xs sm:text-sm font-bold text-white truncate">{item.title}</h3>
               </div>
             </div>
           ))}

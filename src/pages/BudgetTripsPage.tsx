@@ -78,8 +78,8 @@ export const BudgetTripsPage: React.FC = () => {
       </section>
 
       {/* CATEGORY FILTER CIRCLES */}
-      <section className="mx-auto w-full max-w-7xl px-4 pt-10 pb-6 sm:px-6">
-        <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+      <section className="mx-auto w-full max-w-7xl px-4 pt-8 pb-4 sm:pt-10 sm:pb-6 sm:px-6">
+        <div className="flex items-center justify-start sm:justify-center gap-4 sm:gap-8 overflow-x-auto pb-3 pt-1 scrollbar-none px-2 -mx-2">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const isActive = activeCategory === cat.name;
@@ -87,19 +87,19 @@ export const BudgetTripsPage: React.FC = () => {
               <button
                 key={cat.name}
                 onClick={() => setActiveCategory(isActive ? 'All' : cat.name)}
-                className="flex flex-col items-center gap-2 group cursor-pointer focus:outline-none"
+                className="flex flex-col items-center gap-1.5 sm:gap-2 group cursor-pointer focus:outline-none shrink-0"
               >
                 <div
-                  className={`flex h-14 w-14 items-center justify-center rounded-full border transition-all duration-200 shadow-sm ${
+                  className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full border transition-all duration-200 shadow-sm ${
                     isActive
-                      ? 'bg-[#0B5ED7] text-white border-[#0B5ED7] scale-110 shadow-md'
+                      ? 'bg-[#0B5ED7] text-white border-[#0B5ED7] scale-105 sm:scale-110 shadow-md'
                       : 'bg-white text-[#0B5ED7] border-blue-200 group-hover:border-[#0B5ED7] group-hover:bg-blue-50/50'
                   }`}
                 >
-                  <Icon className="h-6 w-6 stroke-[1.8]" />
+                  <Icon className="h-5 w-5 sm:h-6 sm:w-6 stroke-[1.8]" />
                 </div>
                 <span
-                  className={`text-xs font-bold transition-colors ${
+                  className={`text-[11px] sm:text-xs font-bold transition-colors text-center whitespace-nowrap ${
                     isActive ? 'text-[#0B5ED7]' : 'text-slate-700 group-hover:text-[#0B5ED7]'
                   }`}
                 >
@@ -112,8 +112,8 @@ export const BudgetTripsPage: React.FC = () => {
       </section>
 
       {/* BUDGET TRIP CARDS GRID */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8 sm:px-6">
+        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
           {displayedTrips.map((dest) => (
             <div
               key={dest.slug}
@@ -127,30 +127,30 @@ export const BudgetTripsPage: React.FC = () => {
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute left-3 top-3 rounded-full bg-[#0B5ED7] px-3 py-1 text-[11px] font-bold text-white shadow-md">
+                <div className="absolute left-2.5 top-2.5 sm:left-3 sm:top-3 rounded-full bg-[#0B5ED7] px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-[11px] font-bold text-white shadow-md">
                   Under ₹20,000
                 </div>
               </div>
 
               {/* Card Details */}
-              <div className="flex flex-1 flex-col justify-between p-4">
+              <div className="flex flex-1 flex-col justify-between p-3 sm:p-4">
                 <div className="text-left">
-                  <h3 className="text-base font-extrabold text-slate-900 group-hover:text-[#0B5ED7] transition-colors">
+                  <h3 className="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-[#0B5ED7] transition-colors truncate">
                     {dest.name}
                   </h3>
-                  <p className="mt-0.5 text-sm font-extrabold text-[#0B5ED7]">
+                  <p className="mt-0.5 text-xs sm:text-sm font-extrabold text-[#0B5ED7]">
                     {formatINR(dest.price)}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-[11px] sm:text-xs text-slate-500 line-clamp-1">
                     {dest.budgetTripTagline || `${dest.duration} | ${dest.tagline}`}
                   </p>
                 </div>
 
                 {/* View Details Button */}
-                <div className="mt-4">
+                <div className="mt-3 sm:mt-4">
                   <Link
                     to={`/destinations/${dest.slug}`}
-                    className="block w-full rounded-full bg-[#0B5ED7] py-2 text-center text-xs font-bold text-white shadow-sm transition hover:bg-[#094bb0]"
+                    className="flex min-h-[40px] w-full items-center justify-center rounded-full bg-[#0B5ED7] py-2 text-center text-xs font-bold text-white shadow-sm transition hover:bg-[#094bb0] active:scale-95"
                   >
                     View Details
                   </Link>

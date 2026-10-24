@@ -24,9 +24,9 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white shadow-sm">
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-16 sm:h-20 max-w-7xl items-center justify-between px-3 sm:px-6">
         {/* Brand Logo */}
-        <Link to="/" className="shrink-0">
+        <Link to="/" className="shrink-0 flex items-center">
           <Logo />
         </Link>
 
@@ -222,22 +222,23 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
           {onOpenPlanModal ? (
             <button
               onClick={onOpenPlanModal}
-              className="rounded-full bg-[#0B5ED7] px-3.5 py-1.5 text-xs font-bold text-white shadow"
+              className="flex min-h-[38px] items-center rounded-full bg-[#0B5ED7] px-3.5 py-1.5 text-xs font-bold text-white shadow active:scale-95"
             >
               Plan Trip
             </button>
           ) : (
             <Link
               to="/book"
-              className="rounded-full bg-[#0B5ED7] px-3.5 py-1.5 text-xs font-bold text-white shadow"
+              className="flex min-h-[38px] items-center rounded-full bg-[#0B5ED7] px-3.5 py-1.5 text-xs font-bold text-white shadow active:scale-95"
             >
               Plan Trip
             </Link>
           )}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="rounded-lg p-2 text-slate-700 hover:bg-slate-100"
-            aria-label="Menu"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-slate-700 hover:bg-slate-100 active:bg-slate-200 transition"
+            aria-label="Toggle navigation menu"
+            aria-expanded={mobileMenuOpen}
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
@@ -246,80 +247,111 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="border-t border-slate-100 bg-white px-4 py-6 shadow-xl lg:hidden animate-in slide-in-from-top-2">
-          <div className="flex flex-col gap-4 text-base font-semibold text-slate-800">
+        <div className="border-t border-slate-100 bg-white px-4 py-4 shadow-xl lg:hidden animate-in slide-in-from-top-2">
+          <div className="flex flex-col gap-1 text-sm font-semibold text-slate-800">
             <Link
               to="/"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 py-1 text-[#0B5ED7]"
+              className={`flex min-h-[44px] items-center gap-2.5 rounded-xl px-3 transition ${
+                location.pathname === '/'
+                  ? 'bg-blue-50 text-[#0B5ED7]'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
             >
-              <Home className="h-4 w-4" /> Home
+              <Home className="h-4 w-4 text-[#0B5ED7]" /> Home
             </Link>
             <Link
               to="/destinations"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1"
+              className={`flex min-h-[44px] items-center gap-2.5 rounded-xl px-3 transition ${
+                location.pathname.startsWith('/destinations')
+                  ? 'bg-blue-50 text-[#0B5ED7]'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
             >
-              Destinations
+              <MapPin className="h-4 w-4 text-[#0B5ED7]" /> Destinations
             </Link>
             <Link
               to="/budget-trips"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1"
+              className={`flex min-h-[44px] items-center gap-2.5 rounded-xl px-3 transition ${
+                location.pathname === '/budget-trips'
+                  ? 'bg-blue-50 text-[#0B5ED7]'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
             >
-              Budget Trips (Under ₹20,000)
+              <span className="text-[#0B5ED7] font-bold">₹</span> Budget Trips (Under ₹20,000)
             </Link>
             <Link
               to="/about"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1"
+              className={`flex min-h-[44px] items-center gap-2.5 rounded-xl px-3 transition ${
+                location.pathname === '/about'
+                  ? 'bg-blue-50 text-[#0B5ED7]'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
             >
               About Us
             </Link>
             <Link
               to="/gallery"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1"
+              className={`flex min-h-[44px] items-center gap-2.5 rounded-xl px-3 transition ${
+                location.pathname === '/gallery'
+                  ? 'bg-blue-50 text-[#0B5ED7]'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
             >
               Gallery
             </Link>
             <Link
               to="/contact"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1"
+              className={`flex min-h-[44px] items-center gap-2.5 rounded-xl px-3 transition ${
+                location.pathname === '/contact'
+                  ? 'bg-blue-50 text-[#0B5ED7]'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
             >
               Contact
             </Link>
             <Link
               to="/faq"
               onClick={() => setMobileMenuOpen(false)}
-              className="py-1"
+              className={`flex min-h-[44px] items-center gap-2.5 rounded-xl px-3 transition ${
+                location.pathname === '/faq'
+                  ? 'bg-blue-50 text-[#0B5ED7]'
+                  : 'text-slate-700 hover:bg-slate-50'
+              }`}
             >
               FAQ
             </Link>
 
-            <div className="mt-4 border-t pt-4 space-y-3 text-sm text-slate-600">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-[#0B5ED7]" />
+            <div className="mt-3 border-t border-slate-100 pt-3 space-y-2 text-xs text-slate-600">
+              <div className="flex min-h-[36px] items-center gap-2 px-3">
+                <MapPin className="h-4 w-4 text-[#0B5ED7] shrink-0" />
                 <span>Pondicherry, India</span>
               </div>
-              <a href={`tel:${WHATSAPP_PHONE}`} className="flex items-center gap-2 font-bold text-slate-800">
-                <Phone className="h-4 w-4 text-[#0B5ED7]" />
+              <a
+                href={`tel:${WHATSAPP_PHONE}`}
+                className="flex min-h-[40px] items-center gap-2 rounded-xl px-3 font-bold text-slate-800 hover:bg-slate-50"
+              >
+                <Phone className="h-4 w-4 text-[#0B5ED7] shrink-0" />
                 <span>{WHATSAPP_PHONE}</span>
               </a>
               <Link
                 to={user ? '/my-bookings' : '/auth'}
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 text-sm font-semibold text-[#0B5ED7]"
+                className="flex min-h-[40px] items-center gap-2 rounded-xl px-3 font-semibold text-[#0B5ED7] hover:bg-blue-50/50"
               >
-                <User className="h-4 w-4" /> {user ? 'My Bookings' : 'Login / Sign up'}
+                <User className="h-4 w-4 text-[#0B5ED7] shrink-0" /> {user ? 'My Bookings' : 'Login / Sign up'}
               </Link>
               <Link
                 to="/admin"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 text-sm font-semibold text-slate-600"
+                className="flex min-h-[40px] items-center gap-2 rounded-xl px-3 font-semibold text-slate-600 hover:bg-slate-50"
               >
-                <ShieldCheck className="h-4 w-4 text-[#0B5ED7]" /> Admin Dashboard
+                <ShieldCheck className="h-4 w-4 text-[#0B5ED7] shrink-0" /> Admin Dashboard
               </Link>
             </div>
           </div>

@@ -133,7 +133,7 @@ export const AboutPage: React.FC = () => {
             </div>
 
             {/* Circular Stamp: Travel • Explore • Create Memories */}
-            <div className="absolute -bottom-5 -right-5 sm:-bottom-7 sm:-right-7 flex h-28 w-28 sm:h-32 sm:w-32 items-center justify-center pointer-events-none drop-shadow-md">
+            <div className="absolute bottom-2 right-2 sm:-bottom-7 sm:-right-7 flex h-24 w-24 sm:h-32 sm:w-32 items-center justify-center pointer-events-none drop-shadow-md">
               <svg viewBox="0 0 120 120" className="h-full w-full">
                 <path
                   id="stampCircle"
@@ -148,8 +148,8 @@ export const AboutPage: React.FC = () => {
                   </textPath>
                 </text>
               </svg>
-              <div className="absolute grid h-10 w-10 sm:h-12 sm:w-12 place-items-center text-[#0B5ED7]">
-                <Plane className="h-5 w-5 sm:h-6 sm:w-6 -rotate-45 fill-[#0B5ED7]" />
+              <div className="absolute grid h-8 w-8 sm:h-12 sm:w-12 place-items-center text-[#0B5ED7]">
+                <Plane className="h-4 w-4 sm:h-6 sm:w-6 -rotate-45 fill-[#0B5ED7]" />
               </div>
             </div>
           </div>
@@ -158,7 +158,7 @@ export const AboutPage: React.FC = () => {
 
       {/* WHY CHOOSE TRAVROIDD? */}
       <section className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6">
-        <div className="rounded-3xl bg-[#f0f6ff] p-8 sm:p-10 border border-blue-100/60 shadow-sm">
+        <div className="rounded-3xl bg-[#f0f6ff] p-6 sm:p-10 border border-blue-100/60 shadow-sm">
           <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#003366] tracking-tight">
               Why Choose Travroidd?
@@ -166,18 +166,18 @@ export const AboutPage: React.FC = () => {
             <div className="mx-auto mt-2 h-1 w-12 rounded-full bg-[#0B5ED7]" />
           </div>
 
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+          <div className="mt-6 sm:mt-8 grid grid-cols-2 min-[480px]:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {whyChoose.map((item) => {
               const Icon = item.icon;
               return (
                 <div
                   key={item.title}
-                  className="flex flex-col items-center justify-center rounded-2xl bg-white p-5 text-center shadow-sm border border-blue-50 transition hover:-translate-y-1 hover:shadow-md"
+                  className="flex flex-col items-center justify-center rounded-2xl bg-white p-4 sm:p-5 text-center shadow-sm border border-blue-50 transition hover:-translate-y-1 hover:shadow-md"
                 >
-                  <div className="grid h-12 w-12 place-items-center rounded-full bg-blue-50 text-[#0B5ED7]">
+                  <div className="grid h-11 w-11 sm:h-12 sm:w-12 place-items-center rounded-full bg-blue-50 text-[#0B5ED7]">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <h3 className="mt-3 text-xs font-bold text-slate-800">
+                  <h3 className="mt-2.5 sm:mt-3 text-xs font-bold text-slate-800">
                     {item.title}
                   </h3>
                 </div>

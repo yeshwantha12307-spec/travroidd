@@ -174,7 +174,7 @@ export const ContactPage: React.FC = () => {
                       name="name"
                       required
                       placeholder="Your Name"
-                      className="mt-1 h-9 w-full rounded-xl border border-slate-200 px-3 text-xs focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
+                      className="mt-1 h-11 w-full rounded-xl border border-slate-200 px-3.5 text-base sm:text-xs focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
                     />
                   </div>
                   <div>
@@ -184,7 +184,7 @@ export const ContactPage: React.FC = () => {
                       type="email"
                       required
                       placeholder="Your Email"
-                      className="mt-1 h-9 w-full rounded-xl border border-slate-200 px-3 text-xs focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
+                      className="mt-1 h-11 w-full rounded-xl border border-slate-200 px-3.5 text-base sm:text-xs focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
                     />
                   </div>
                 </div>
@@ -197,7 +197,7 @@ export const ContactPage: React.FC = () => {
                       type="tel"
                       required
                       placeholder="Phone Number"
-                      className="mt-1 h-9 w-full rounded-xl border border-slate-200 px-3 text-xs focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
+                      className="mt-1 h-11 w-full rounded-xl border border-slate-200 px-3.5 text-base sm:text-xs focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
                     />
                   </div>
                   <div>
@@ -206,7 +206,7 @@ export const ContactPage: React.FC = () => {
                     </label>
                     <select
                       name="destination"
-                      className="mt-1 h-9 w-full rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
+                      className="mt-1 h-11 w-full rounded-xl border border-slate-200 bg-white px-3.5 text-base sm:text-xs font-medium text-slate-700 focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7] cursor-pointer"
                     >
                       <option value="">Select Destination</option>
                       {destinations.map((d) => (
@@ -225,14 +225,14 @@ export const ContactPage: React.FC = () => {
                     required
                     rows={4}
                     placeholder="Tell us what you are looking for..."
-                    className="mt-1 w-full rounded-xl border border-slate-200 p-3 text-xs focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
+                    className="mt-1 w-full rounded-xl border border-slate-200 p-3.5 text-base sm:text-xs focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="w-full rounded-full bg-[#0B5ED7] py-3 text-xs font-bold text-white shadow-md transition hover:bg-[#094bb0]"
+                  className="flex min-h-[44px] items-center justify-center w-full rounded-full bg-[#0B5ED7] py-3 text-sm sm:text-xs font-bold text-white shadow-md transition hover:bg-[#094bb0] active:scale-95 disabled:opacity-70 cursor-pointer"
                 >
                   {submitting ? 'Sending...' : 'Send Message'}
                 </button>
@@ -275,7 +275,7 @@ export const ContactPage: React.FC = () => {
 
             <button
               onClick={openGoogleMaps}
-              className="mt-4 flex items-center justify-center gap-2 w-full rounded-full bg-[#0B5ED7] py-2.5 text-xs font-bold text-white shadow transition hover:bg-[#094bb0]"
+              className="mt-4 flex min-h-[44px] items-center justify-center gap-2 w-full rounded-full bg-[#0B5ED7] py-2.5 text-xs font-bold text-white shadow transition hover:bg-[#094bb0] active:scale-95 cursor-pointer"
             >
               <span>Get Directions</span>
               <ExternalLink className="h-3 w-3" />

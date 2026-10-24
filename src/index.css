@@ -20,13 +20,35 @@
   --pin-red: #E53935;
 }
 
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: #FFFFFF;
   color: #0B2447;
   margin: 0;
   padding: 0;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Prevent accidental horizontal overflow on mobile */
+* {
+  box-sizing: border-box;
+}
+
+/* Hide scrollbar for category tabs while maintaining touch scrolling */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 h1, h2, h3, h4, h5, h6 {

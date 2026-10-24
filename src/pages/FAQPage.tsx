@@ -72,8 +72,8 @@ export const FAQPage: React.FC = () => {
       </section>
 
       {/* FAQ ACCORDION CONTAINER */}
-      <section className="mx-auto -mt-8 w-full max-w-4xl px-4 sm:px-6 z-20">
-        <div className="rounded-3xl bg-white p-6 shadow-xl sm:p-10 border border-slate-100 space-y-4">
+      <section className="mx-auto -mt-8 w-full max-w-4xl px-3 sm:px-6 z-20">
+        <div className="rounded-3xl bg-white p-4 sm:p-10 shadow-xl border border-slate-100 space-y-3 sm:space-y-4">
           {faqs.map((faq) => {
             const isOpen = openIds.includes(faq.id);
             return (
@@ -84,12 +84,12 @@ export const FAQPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => toggle(faq.id)}
-                  className="flex w-full items-center justify-between p-5 text-left transition hover:bg-slate-50"
+                  className="flex min-h-[48px] w-full items-center justify-between p-3.5 sm:p-5 text-left transition hover:bg-slate-50 cursor-pointer"
                 >
-                  <span className="text-sm sm:text-base font-bold text-slate-800">
+                  <span className="text-xs sm:text-base font-bold text-slate-800 pr-2">
                     {faq.id}. {faq.question}
                   </span>
-                  <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-blue-50 text-[#0B5ED7] ml-4">
+                  <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-blue-50 text-[#0B5ED7] ml-2 sm:ml-4">
                     {isOpen ? (
                       <Minus className="h-4 w-4" />
                     ) : (
@@ -99,7 +99,7 @@ export const FAQPage: React.FC = () => {
                 </button>
 
                 {isOpen && (
-                  <div className="border-t border-slate-100 bg-slate-50/50 px-5 py-4 text-xs sm:text-sm text-slate-600 leading-relaxed animate-in fade-in-50">
+                  <div className="border-t border-slate-100 bg-slate-50/50 px-3.5 py-3 sm:px-5 sm:py-4 text-xs sm:text-sm text-slate-600 leading-relaxed animate-in fade-in-50">
                     {faq.answer}
                   </div>
                 )}
@@ -109,8 +109,8 @@ export const FAQPage: React.FC = () => {
         </div>
 
         {/* WhatsApp Help Banner */}
-        <div className="mt-10 rounded-2xl bg-gradient-to-r from-blue-50 to-sky-50 p-6 text-center border border-blue-100 shadow-sm">
-          <h3 className="text-base font-bold text-slate-800">
+        <div className="mt-8 sm:mt-10 rounded-2xl bg-gradient-to-r from-blue-50 to-sky-50 p-5 sm:p-6 text-center border border-blue-100 shadow-sm">
+          <h3 className="text-sm sm:text-base font-bold text-slate-800">
             Still have questions? We're happy to help!
           </h3>
           <p className="mt-1 text-xs text-slate-500">
@@ -120,7 +120,7 @@ export const FAQPage: React.FC = () => {
             href={getWhatsAppUrl('Hi Travroidd! I have a question regarding trip booking.')}
             target="_blank"
             rel="noreferrer"
-            className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-2.5 text-xs font-bold text-white shadow transition hover:bg-[#20ba5a]"
+            className="mt-4 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-[#25D366] px-6 py-2.5 text-xs font-bold text-white shadow transition hover:bg-[#20ba5a] active:scale-95"
           >
             <MessageCircle className="h-4 w-4" />
             Chat with Us on WhatsApp

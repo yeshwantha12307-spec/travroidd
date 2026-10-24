@@ -23,10 +23,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const sizes = {
-      default: 'h-9 px-4 py-2',
-      sm: 'h-8 rounded-md px-3 text-xs',
-      lg: 'h-10 rounded-md px-8',
-      icon: 'h-9 w-9',
+      default: 'min-h-[40px] sm:min-h-[36px] h-10 sm:h-9 px-4 py-2 rounded-xl',
+      sm: 'min-h-[36px] h-9 sm:h-8 rounded-lg px-3 text-xs',
+      lg: 'min-h-[44px] h-11 sm:h-10 rounded-xl px-8 text-sm font-bold active:scale-95',
+      icon: 'min-h-[44px] min-w-[44px] h-11 w-11 sm:h-9 sm:w-9 rounded-xl',
     };
 
     const combinedClassName = cn(baseStyles, variants[variant], sizes[size], className);

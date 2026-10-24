@@ -76,18 +76,19 @@ export const PlanTripModal: React.FC<{
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in-50">
-      <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm animate-in fade-in-50">
+      <div className="relative w-full max-w-lg max-h-[92vh] overflow-y-auto scrollbar-none rounded-3xl bg-white p-5 sm:p-8 shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute right-5 top-5 rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+          aria-label="Close modal"
+          className="absolute right-3.5 top-3.5 sm:right-5 sm:top-5 flex h-10 w-10 min-h-[44px] min-w-[44px] items-center justify-center rounded-full p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 active:scale-95 cursor-pointer"
         >
           <X className="h-5 w-5" />
         </button>
 
         <div className="flex flex-col items-center text-center">
           <Logo size="sm" className="mb-2" />
-          <h2 className="mt-1 text-2xl font-extrabold text-slate-900">
+          <h2 className="mt-1 text-xl sm:text-2xl font-extrabold text-slate-900">
             Plan Your Dream Vacation
           </h2>
           <p className="mt-1 text-xs text-slate-500">
@@ -95,13 +96,13 @@ export const PlanTripModal: React.FC<{
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-5 sm:mt-6 space-y-3.5 sm:space-y-4">
           <div>
             <Label>Select Destination</Label>
             <select
               value={selectedSlug}
               onChange={(e) => setSelectedSlug(e.target.value)}
-              className="mt-1.5 h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium shadow-sm focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7]"
+              className="mt-1.5 min-h-[44px] h-11 sm:h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-base sm:text-sm font-medium shadow-sm focus:border-[#0B5ED7] focus:outline-none focus:ring-1 focus:ring-[#0B5ED7] cursor-pointer"
             >
               {destinations.map((d) => (
                 <option key={d.slug} value={d.slug}>
@@ -203,7 +204,7 @@ export const PlanTripModal: React.FC<{
             <button
               type="submit"
               disabled={submitting}
-              className="flex items-center justify-center gap-2 rounded-xl bg-[#0B5ED7] py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#094bb0]"
+              className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#0B5ED7] py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#094bb0] active:scale-95 disabled:opacity-70 cursor-pointer"
             >
               <Send className="h-4 w-4" />
               {submitting ? 'Submitting…' : 'Submit Enquiry'}
@@ -212,7 +213,7 @@ export const PlanTripModal: React.FC<{
             <button
               type="button"
               onClick={handleWhatsApp}
-              className="flex items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#20ba5a]"
+              className="flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-[#25D366] py-3 text-sm font-bold text-white shadow-md transition hover:bg-[#20ba5a] active:scale-95 cursor-pointer"
             >
               <MessageCircle className="h-4 w-4" />
               Chat on WhatsApp

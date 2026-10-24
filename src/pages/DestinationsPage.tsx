@@ -99,57 +99,63 @@ export const DestinationsPage: React.FC = () => {
 
       {/* SEARCH AND FILTER BAR */}
       <div className="mx-auto -mt-7 w-full max-w-5xl px-4 z-20">
-        <div className="flex flex-col gap-3 rounded-2xl bg-white p-3.5 shadow-xl sm:flex-row sm:items-center sm:rounded-full border border-slate-100">
-          <div className="flex flex-1 items-center gap-2.5 px-4 py-1.5">
+        <div className="flex flex-col gap-2.5 rounded-2xl bg-white p-3 shadow-xl sm:flex-row sm:items-center sm:rounded-full border border-slate-100">
+          <div className="flex flex-1 items-center gap-2.5 px-3 py-1.5 min-h-[44px]">
             <Search className="h-4 w-4 text-[#0B5ED7] shrink-0" />
             <input
               type="text"
               placeholder="Search Destination..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search destination"
               className="w-full bg-transparent text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none"
             />
           </div>
 
           <div className="hidden h-6 w-px bg-slate-200 sm:block" />
 
-          <div className="px-3 py-1">
-            <select
-              value={selectedState}
-              onChange={(e) => setSelectedState(e.target.value)}
-              className="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
-            >
-              <option value="All">All States</option>
-              {states
-                .filter((s) => s !== 'All')
-                .map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-            </select>
-          </div>
+          {/* State and Budget Dropdowns */}
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
+            <div className="rounded-xl bg-slate-50 px-3 py-2 sm:bg-transparent sm:py-1 min-h-[44px] sm:min-h-0 flex items-center border border-slate-100 sm:border-none">
+              <select
+                value={selectedState}
+                onChange={(e) => setSelectedState(e.target.value)}
+                aria-label="Filter by state"
+                className="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
+              >
+                <option value="All">All States</option>
+                {states
+                  .filter((s) => s !== 'All')
+                  .map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+              </select>
+            </div>
 
-          <div className="hidden h-6 w-px bg-slate-200 sm:block" />
+            <div className="hidden h-6 w-px bg-slate-200 sm:block" />
 
-          <div className="px-3 py-1">
-            <select
-              value={selectedBudget}
-              onChange={(e) => setSelectedBudget(e.target.value)}
-              className="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
-            >
-              <option value="All">All Budget</option>
-              <option value="8000">Under ₹8,000</option>
-              <option value="10000">Under ₹10,000</option>
-              <option value="12000">Under ₹12,000</option>
-              <option value="15000">Under ₹15,000</option>
-              <option value="20000">Under ₹20,000</option>
-            </select>
+            <div className="rounded-xl bg-slate-50 px-3 py-2 sm:bg-transparent sm:py-1 min-h-[44px] sm:min-h-0 flex items-center border border-slate-100 sm:border-none">
+              <select
+                value={selectedBudget}
+                onChange={(e) => setSelectedBudget(e.target.value)}
+                aria-label="Filter by budget"
+                className="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer"
+              >
+                <option value="All">All Budget</option>
+                <option value="8000">Under ₹8,000</option>
+                <option value="10000">Under ₹10,000</option>
+                <option value="12000">Under ₹12,000</option>
+                <option value="15000">Under ₹15,000</option>
+                <option value="20000">Under ₹20,000</option>
+              </select>
+            </div>
           </div>
 
           <button
             onClick={() => {}}
-            className="flex items-center justify-center gap-1.5 rounded-full bg-[#0B5ED7] px-6 py-2.5 text-xs font-bold text-white shadow transition hover:bg-[#094bb0]"
+            className="flex items-center justify-center gap-1.5 rounded-full bg-[#0B5ED7] px-6 py-2.5 text-xs font-bold text-white shadow transition hover:bg-[#094bb0] active:scale-95 w-full sm:w-auto min-h-[44px] shrink-0"
           >
             <span>Search</span>
           </button>
@@ -158,13 +164,13 @@ export const DestinationsPage: React.FC = () => {
 
       {/* Active filter count / reset */}
       {(searchQuery || selectedState !== 'All' || selectedBudget !== 'All') && (
-        <div className="mx-auto mt-4 flex max-w-5xl items-center justify-between px-4 text-xs text-slate-500">
+        <div className="mx-auto mt-4 flex max-w-5xl flex-col sm:flex-row gap-2 items-center justify-between px-4 text-xs text-slate-500">
           <span>
             Found {filteredDestinations.length} destination(s) matching your filters
           </span>
           <button
             onClick={resetFilters}
-            className="flex items-center gap-1 font-bold text-[#0B5ED7] hover:underline"
+            className="flex items-center gap-1 font-bold text-[#0B5ED7] hover:underline min-h-[36px] py-1"
           >
             <RotateCcw className="h-3 w-3" /> Reset filters
           </button>
@@ -172,8 +178,8 @@ export const DestinationsPage: React.FC = () => {
       )}
 
       {/* DESTINATION CARDS GRID */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6">
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:py-12 sm:px-6">
+        <div className="grid grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
           {filteredDestinations.map((dest) => (
             <Link
               key={dest.slug}
@@ -191,16 +197,16 @@ export const DestinationsPage: React.FC = () => {
               </div>
 
               {/* Content */}
-              <div className="p-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-base font-extrabold text-slate-900 group-hover:text-[#0B5ED7] transition-colors">
+              <div className="p-3 sm:p-4">
+                <div className="flex flex-col min-[420px]:flex-row min-[420px]:items-center justify-between gap-1">
+                  <h3 className="text-sm sm:text-base font-extrabold text-slate-900 group-hover:text-[#0B5ED7] transition-colors truncate">
                     {dest.name}
                   </h3>
-                  <span className="text-sm font-extrabold text-[#0B5ED7]">
+                  <span className="text-xs sm:text-sm font-extrabold text-[#0B5ED7] shrink-0">
                     {formatINR(dest.price)}
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-[11px] sm:text-xs text-slate-500 line-clamp-1">
                   {dest.topDestinationTagline || `${dest.duration} | ${dest.category} | ${dest.tagline}`}
                 </p>
               </div>
