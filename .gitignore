@@ -23,3 +23,15 @@ dist-ssr
 *.sln
 *.sw?
 scratch_chrome
+
+# Environment variables & secrets
+.env
+.env.local
+.env.*.local
+
+# Database files
+server/data/*.db
+server/data/*.db-journal
+server/data/*.db-wal
+server/data/*.db-shm
+

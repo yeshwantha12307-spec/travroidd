@@ -50,11 +50,12 @@ export const ContactPage: React.FC = () => {
       setSubmitted(true);
       toast.success('Your message has been sent successfully! We will call you soon.');
       form.reset();
-    } catch {
-      toast.error('Failed to send message. Please try again.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to send message. Please try again.');
     } finally {
       setSubmitting(false);
     }
+
   };
 
   const openGoogleMaps = () => {

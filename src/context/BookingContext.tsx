@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { type Destination, INITIAL_DESTINATIONS } from '../data/destinations';
+import { useAuth } from './AuthContext';
 
 export interface Booking {
   id: string;
@@ -32,33 +33,39 @@ interface BookingContextType {
   enquiries: Enquiry[];
   likes: Record<string, number>;
   userLikes: Record<string, boolean>;
+  loading: boolean;
   addBooking: (bookingData: Omit<Booking, 'id' | 'created_at' | 'status'>) => Promise<Booking>;
-  updateBookingStatus: (id: string, status: 'pending' | 'confirmed' | 'cancelled') => void;
-  deleteBooking: (id: string) => void;
+  updateBookingStatus: (id: string, status: 'pending' | 'confirmed' | 'cancelled') => Promise<void>;
+  deleteBooking: (id: string) => Promise<void>;
   addEnquiry: (enquiry: Omit<Enquiry, 'id' | 'created_at'>) => Promise<Enquiry>;
+  deleteEnquiry: (id: string) => Promise<void>;
   toggleLike: (slug: string, userId?: string) => void;
   updateDestination: (destination: Destination) => void;
   addDestination: (destination: Destination) => void;
   deleteDestination: (slug: string) => void;
   getDestination: (slug: string) => Destination | undefined;
+  refreshBookings: () => Promise<void>;
 }
 
 const BookingContext = createContext<BookingContextType | null>(null);
 
 const DESTINATIONS_KEY = 'travroidd_destinations_v5';
-const BOOKINGS_KEY = 'travroidd_bookings';
-const ENQUIRIES_KEY = 'travroidd_enquiries';
 const LIKES_KEY = 'travroidd_likes';
 const USER_LIKES_KEY = 'travroidd_user_likes';
 
 export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isAdmin } = useAuth();
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Destinations data loaded with local image paths
   const [destinations, setDestinations] = useState<Destination[]>(() => {
     try {
       const stored = localStorage.getItem(DESTINATIONS_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          // Reconcile with INITIAL_DESTINATIONS so verified local image paths always take effect
           return INITIAL_DESTINATIONS.map((initial) => {
             const existing = parsed.find((p: Destination) => p.slug === initial.slug);
             return existing
@@ -82,88 +89,10 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   });
 
-  const [bookings, setBookings] = useState<Booking[]>(() => {
-    try {
-      const stored = localStorage.getItem(BOOKINGS_KEY);
-      if (stored) return JSON.parse(stored);
-      // Default sample bookings so admin has rich data to view right away
-      return [
-        {
-          id: 'bk-1001',
-          created_at: new Date(Date.now() - 3600000 * 24).toISOString(),
-          user_id: 'usr-1',
-          full_name: 'Priya Sharma',
-          email: 'priya.sharma@example.com',
-          phone: '+91 9876543210',
-          destination: 'goa',
-          travel_date: '2026-11-15',
-          travelers: 2,
-          price_per_person: 5999,
-          total_amount: 11998,
-          notes: 'Prefer beach-facing stay if available.',
-          status: 'pending',
-        },
-        {
-          id: 'bk-1002',
-          created_at: new Date(Date.now() - 3600000 * 48).toISOString(),
-          user_id: 'usr-2',
-          full_name: 'Rahul Verma',
-          email: 'rahul.v@example.com',
-          phone: '+91 9845123456',
-          destination: 'kasol',
-          travel_date: '2026-11-20',
-          travelers: 4,
-          price_per_person: 6999,
-          total_amount: 27996,
-          notes: 'Interested in Kheerganga trek guidance.',
-          status: 'confirmed',
-        },
-        {
-          id: 'bk-1003',
-          created_at: new Date(Date.now() - 3600000 * 72).toISOString(),
-          user_id: 'usr-3',
-          full_name: 'Ananya Sen',
-          email: 'ananya.s@example.com',
-          phone: '+91 9711223344',
-          destination: 'kashmir',
-          travel_date: '2026-12-05',
-          travelers: 2,
-          price_per_person: 9999,
-          total_amount: 19998,
-          notes: 'Houseboat on Dal Lake is must.',
-          status: 'confirmed',
-        },
-      ];
-    } catch {
-      return [];
-    }
-  });
-
-  const [enquiries, setEnquiries] = useState<Enquiry[]>(() => {
-    try {
-      const stored = localStorage.getItem(ENQUIRIES_KEY);
-      if (stored) return JSON.parse(stored);
-      return [
-        {
-          id: 'enq-1',
-          created_at: new Date(Date.now() - 3600000 * 12).toISOString(),
-          name: 'Vikram Joshi',
-          email: 'vikram.j@gmail.com',
-          phone: '+91 9988776655',
-          message: 'Can you customize a 6-day package for Kashmir with Gulmarg skiing?',
-        },
-      ];
-    } catch {
-      return [];
-    }
-  });
-
   const [likes, setLikes] = useState<Record<string, number>>(() => {
     try {
       const stored = localStorage.getItem(LIKES_KEY);
-      return stored
-        ? JSON.parse(stored)
-        : { goa: 42, kasol: 38, dharamshala: 29, kashmir: 65 };
+      return stored ? JSON.parse(stored) : { goa: 42, kasol: 38, dharamshala: 29, kashmir: 65 };
     } catch {
       return { goa: 42, kasol: 38, dharamshala: 29, kashmir: 65 };
     }
@@ -183,14 +112,6 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   }, [destinations]);
 
   useEffect(() => {
-    localStorage.setItem(BOOKINGS_KEY, JSON.stringify(bookings));
-  }, [bookings]);
-
-  useEffect(() => {
-    localStorage.setItem(ENQUIRIES_KEY, JSON.stringify(enquiries));
-  }, [enquiries]);
-
-  useEffect(() => {
     localStorage.setItem(LIKES_KEY, JSON.stringify(likes));
   }, [likes]);
 
@@ -198,39 +119,142 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     localStorage.setItem(USER_LIKES_KEY, JSON.stringify(userLikes));
   }, [userLikes]);
 
+  // Fetch bookings securely from server based on role
+  const refreshBookings = useCallback(async () => {
+    if (!user) {
+      setBookings([]);
+      setEnquiries([]);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (isAdmin) {
+        // Fetch all bookings for administrator
+        const [bRes, eRes] = await Promise.all([
+          fetch('/api/admin/bookings', { credentials: 'include' }),
+          fetch('/api/admin/enquiries', { credentials: 'include' }),
+        ]);
+
+        if (bRes.ok) {
+          const bData = await bRes.json();
+          setBookings(bData.bookings || []);
+        }
+        if (eRes.ok) {
+          const eData = await eRes.json();
+          setEnquiries(eData.enquiries || []);
+        }
+      } else {
+        // Fetch customer's own bookings only
+        const res = await fetch('/api/bookings/my', { credentials: 'include' });
+        if (res.ok) {
+          const data = await res.json();
+          setBookings(data.bookings || []);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to load bookings from API:', e);
+    } finally {
+      setLoading(false);
+    }
+  }, [user, isAdmin]);
+
+  useEffect(() => {
+    refreshBookings();
+  }, [refreshBookings]);
+
   const addBooking = async (
     bookingData: Omit<Booking, 'id' | 'created_at' | 'status'>
   ): Promise<Booking> => {
-    const newBooking: Booking = {
-      ...bookingData,
-      id: 'TRV' + Math.random().toString(36).substring(2, 8).toUpperCase(),
-      created_at: new Date().toISOString(),
-      status: 'pending',
-    };
+    const res = await fetch('/api/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(bookingData),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to submit booking');
+    }
+
+    const newBooking: Booking = data.booking;
     setBookings((prev) => [newBooking, ...prev]);
     return newBooking;
   };
 
-  const updateBookingStatus = (id: string, status: 'pending' | 'confirmed' | 'cancelled') => {
+  const updateBookingStatus = async (
+    id: string,
+    status: 'pending' | 'confirmed' | 'cancelled'
+  ) => {
+    const res = await fetch(`/api/admin/bookings/${id}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ status }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update booking status');
+    }
+
     setBookings((prev) =>
       prev.map((b) => (b.id === id ? { ...b, status } : b))
     );
   };
 
-  const deleteBooking = (id: string) => {
+  const deleteBooking = async (id: string) => {
+    const res = await fetch(`/api/admin/bookings/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to delete booking');
+    }
+
     setBookings((prev) => prev.filter((b) => b.id !== id));
   };
 
   const addEnquiry = async (
     enquiryData: Omit<Enquiry, 'id' | 'created_at'>
   ): Promise<Enquiry> => {
-    const newEnq: Enquiry = {
-      ...enquiryData,
-      id: 'ENQ' + Math.random().toString(36).substring(2, 8).toUpperCase(),
+    const res = await fetch('/api/bookings/enquiries', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(enquiryData),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to submit enquiry');
+    }
+
+    const created: Enquiry = {
+      id: data.id,
       created_at: new Date().toISOString(),
+      ...enquiryData,
     };
-    setEnquiries((prev) => [newEnq, ...prev]);
-    return newEnq;
+
+    setEnquiries((prev) => [created, ...prev]);
+    return created;
+  };
+
+  const deleteEnquiry = async (id: string) => {
+    const res = await fetch(`/api/admin/enquiries/${id}`, {
+      method: 'DELETE',
+      credentials: 'include',
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to delete enquiry');
+    }
+
+    setEnquiries((prev) => prev.filter((e) => e.id !== id));
   };
 
   const toggleLike = (slug: string, userId?: string) => {
@@ -274,15 +298,18 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         enquiries,
         likes,
         userLikes,
+        loading,
         addBooking,
         updateBookingStatus,
         deleteBooking,
         addEnquiry,
+        deleteEnquiry,
         toggleLike,
         updateDestination,
         addDestination,
         deleteDestination,
         getDestination,
+        refreshBookings,
       }}
     >
       {children}

@@ -182,7 +182,13 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 sm:flex-row text-xs text-slate-400 text-center sm:text-left">
-          <p>© 2025 Travroidd. All rights reserved.</p>
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4">
+            <p>© 2025 Travroidd. All rights reserved.</p>
+            <span className="hidden sm:inline text-slate-600">|</span>
+            <Link to="/privacy" className="hover:text-white transition">Privacy Policy</Link>
+            <span className="text-slate-600">·</span>
+            <Link to="/terms" className="hover:text-white transition">Terms of Service</Link>
+          </div>
           <p className="font-script flex items-center gap-1.5 text-lg text-blue-200">
             <span>Pack your bags. Make your memory</span>
             <svg
@@ -195,5 +201,6 @@ export const Footer: React.FC = () => {
         </div>
       </div>
     </footer>
+
   );
 };

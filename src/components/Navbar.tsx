@@ -10,6 +10,7 @@ import {
   X,
   ShieldCheck,
   User,
+  LogOut,
 } from 'lucide-react';
 import { Logo } from './Logo';
 import { WHATSAPP_PHONE } from '../data/destinations';
@@ -20,7 +21,8 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
   const [destDropdownOpen, setDestDropdownOpen] = useState(false);
   const [budgetDropdownOpen, setBudgetDropdownOpen] = useState(false);
   const location = useLocation();
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
+
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-white shadow-sm">
@@ -187,17 +189,45 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
             <span>{WHATSAPP_PHONE}</span>
           </a>
 
-          {/* Admin link badge if admin */}
-          {isAdmin && (
+          {/* User Account or Sign In */}
+          {user ? (
+            <div className="flex items-center gap-3">
+              <Link
+                to="/my-bookings"
+                className="flex items-center gap-1 text-xs font-semibold text-slate-700 hover:text-[#0B5ED7] transition"
+                title={`Signed in as ${user.email}`}
+              >
+                <User className="h-4 w-4 text-[#0B5ED7]" />
+                <span className="max-w-[110px] truncate">{user.name || 'My Bookings'}</span>
+              </Link>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="flex items-center gap-1 rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-[#0B5ED7] border border-blue-200 hover:bg-blue-100"
+                >
+                  <ShieldCheck className="h-3.5 w-3.5" /> Admin
+                </Link>
+              )}
+              <button
+                onClick={() => signOut()}
+                className="p-1 text-slate-400 hover:text-red-600 transition"
+                title="Sign out"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
             <Link
-              to="/admin"
-              className="flex items-center gap-1 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-[#0B5ED7] border border-blue-200 hover:bg-blue-100"
+              to="/auth"
+              className="flex items-center gap-1.5 text-xs font-semibold text-[#0B5ED7] hover:text-[#094bb0] transition"
             >
-              <ShieldCheck className="h-3.5 w-3.5" /> Admin
+              <User className="h-4 w-4" />
+              <span>Sign In</span>
             </Link>
           )}
 
           {/* Plan Your Trip Button */}
+
           {onOpenPlanModal ? (
             <button
               onClick={onOpenPlanModal}
@@ -339,20 +369,44 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
                 <Phone className="h-4 w-4 text-[#0B5ED7] shrink-0" />
                 <span>{WHATSAPP_PHONE}</span>
               </a>
-              <Link
-                to={user ? '/my-bookings' : '/auth'}
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex min-h-[40px] items-center gap-2 rounded-xl px-3 font-semibold text-[#0B5ED7] hover:bg-blue-50/50"
-              >
-                <User className="h-4 w-4 text-[#0B5ED7] shrink-0" /> {user ? 'My Bookings' : 'Login / Sign up'}
-              </Link>
-              <Link
-                to="/admin"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex min-h-[40px] items-center gap-2 rounded-xl px-3 font-semibold text-slate-600 hover:bg-slate-50"
-              >
-                <ShieldCheck className="h-4 w-4 text-[#0B5ED7] shrink-0" /> Admin Dashboard
-              </Link>
+              {user ? (
+                <>
+                  <Link
+                    to="/my-bookings"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex min-h-[40px] items-center gap-2 rounded-xl px-3 font-semibold text-[#0B5ED7] hover:bg-blue-50/50"
+                  >
+                    <User className="h-4 w-4 text-[#0B5ED7] shrink-0" /> My Bookings ({user.name || user.email})
+                  </Link>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex min-h-[40px] items-center gap-2 rounded-xl px-3 font-semibold text-amber-700 bg-amber-50/70"
+                    >
+                      <ShieldCheck className="h-4 w-4 text-amber-600 shrink-0" /> Admin Dashboard
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex w-full min-h-[40px] items-center gap-2 rounded-xl px-3 font-semibold text-red-600 hover:bg-red-50"
+                  >
+                    <LogOut className="h-4 w-4 text-red-500 shrink-0" /> Sign out
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/auth"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex min-h-[40px] items-center gap-2 rounded-xl px-3 font-semibold text-[#0B5ED7] hover:bg-blue-50/50"
+                >
+                  <User className="h-4 w-4 text-[#0B5ED7] shrink-0" /> Login / Sign up
+                </Link>
+              )}
+
             </div>
           </div>
         </div>

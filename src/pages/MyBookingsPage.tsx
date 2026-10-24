@@ -7,28 +7,41 @@ import { useBookings } from '../context/BookingContext';
 import { formatINR } from '../data/destinations';
 
 export const MyBookingsPage: React.FC = () => {
-  const { user } = useAuth();
-  const { bookings, getDestination } = useBookings();
-
-  // If user is logged in, show their bookings. Otherwise show demo user bookings or all
-  const userBookings = user
-    ? bookings.filter((b) => b.user_id === user.id || b.email.toLowerCase() === user.email.toLowerCase())
-    : [];
+  const { user, signOut } = useAuth();
+  const { bookings, loading, getDestination } = useBookings();
 
   return (
     <section className="mx-auto max-w-4xl px-4 py-16">
-      <h1 className="text-4xl font-bold">My bookings</h1>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-bold">My bookings</h1>
+          {user && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Bookings registered under <span className="font-semibold text-slate-800">{user.email}</span>
+            </p>
+          )}
+        </div>
+        {user && (
+          <Button variant="ghost" size="sm" onClick={() => signOut()} className="text-muted-foreground hover:text-red-600">
+            Sign out
+          </Button>
+        )}
+      </div>
 
       {!user ? (
         <div className="mt-8 rounded-2xl border bg-card p-8 text-center shadow-card">
-          <p>Please log in to view your bookings.</p>
+          <p>Please log in to view your private bookings.</p>
           <Button asChild className="mt-4">
             <Link to="/auth">Login / Sign up</Link>
           </Button>
         </div>
-      ) : userBookings.length ? (
+      ) : loading ? (
+        <div className="mt-8 flex justify-center py-12">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#0B5ED7] border-t-transparent" />
+        </div>
+      ) : bookings.length ? (
         <div className="mt-8 space-y-4">
-          {userBookings.map((b) => {
+          {bookings.map((b) => {
             const dest = getDestination(b.destination);
             return (
               <div

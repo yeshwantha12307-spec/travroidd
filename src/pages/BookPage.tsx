@@ -79,11 +79,12 @@ export const BookPage: React.FC = () => {
 
       setBookingRef(created.id);
       toast.success('Booking request sent successfully!');
-    } catch {
-      toast.error('Could not submit booking. Please try again.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Could not submit booking. Please try again.');
     } finally {
       setSubmitting(false);
     }
+
   };
 
   const todayStr = new Date().toISOString().split('T')[0];

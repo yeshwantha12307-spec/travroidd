@@ -22,6 +22,12 @@ import { MyBookingsPage } from './pages/MyBookingsPage';
 import { AdminPage } from './pages/AdminPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 
+import { ProtectedRoute } from './components/ProtectedRoute';
+import { AdminRoute } from './components/AdminRoute';
+import { AdminChangePasswordModal } from './components/AdminChangePasswordModal';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
+import { TermsOfServicePage } from './pages/TermsOfServicePage';
+
 function ScrollToTop() {
   const { pathname } = useLocation();
 
@@ -41,6 +47,7 @@ export function App() {
         <BrowserRouter>
           <IntroAnimation />
           <ScrollToTop />
+          <AdminChangePasswordModal />
           <div className="min-h-screen flex flex-col bg-white text-slate-900 font-sans antialiased selection:bg-[#0B5ED7] selection:text-white">
             <Navbar onOpenPlanModal={() => setPlanModalOpen(true)} />
             <main className="flex-1">
@@ -59,8 +66,24 @@ export function App() {
                 <Route path="/faq" element={<FAQPage />} />
                 <Route path="/book" element={<BookPage />} />
                 <Route path="/auth" element={<AuthPage />} />
-                <Route path="/my-bookings" element={<MyBookingsPage />} />
-                <Route path="/admin" element={<AdminPage />} />
+                <Route
+                  path="/my-bookings"
+                  element={
+                    <ProtectedRoute>
+                      <MyBookingsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <AdminPage />
+                    </AdminRoute>
+                  }
+                />
+                <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                <Route path="/terms" element={<TermsOfServicePage />} />
                 <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </main>

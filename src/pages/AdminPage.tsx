@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Trash2, Edit3, MessageCircle, Phone, RefreshCw } from 'lucide-react';
+import { Plus, Trash2, Edit3, MessageCircle, Phone, RefreshCw, KeyRound, ShieldAlert } from 'lucide-react';
 import { StatusBadge } from '../components/StatusBadge';
 import { Button } from '../components/ui/Button';
 import { Input, Textarea, Label } from '../components/ui/Input';
@@ -11,13 +11,14 @@ import { formatINR } from '../data/destinations';
 import { toast } from 'sonner';
 
 export const AdminPage: React.FC = () => {
-  const { user, isAdmin, signIn } = useAuth();
+  const { user, isAdmin, changePassword, signOut } = useAuth();
   const {
     bookings,
     enquiries,
     destinations,
     updateBookingStatus,
     deleteBooking,
+    deleteEnquiry,
     updateDestination,
     addDestination,
     deleteDestination,
@@ -27,6 +28,11 @@ export const AdminPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'bookings' | 'destinations' | 'enquiries'>('bookings');
   const [editingDest, setEditingDest] = useState<Destination | null>(null);
   const [isAddingDest, setIsAddingDest] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [currentPass, setCurrentPass] = useState('');
+  const [newPass, setNewPass] = useState('');
+  const [confirmPass, setConfirmPass] = useState('');
+  const [changingPass, setChangingPass] = useState(false);
 
   // New destination form state
   const [newDest, setNewDest] = useState<Partial<Destination>>({
@@ -45,25 +51,22 @@ export const AdminPage: React.FC = () => {
     ],
   });
 
-  const handleQuickAdminLogin = async () => {
-    const res = await signIn('admin@travroidd.com', 'admin123');
-    if (res.error) toast.error(res.error.message);
-    else toast.success('Signed in as Admin!');
-  };
-
   if (!isAdmin) {
     return (
       <section className="mx-auto max-w-md px-4 py-24 text-center">
-        <h1 className="text-2xl font-bold">Access denied</h1>
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
+          <ShieldAlert className="h-8 w-8" />
+        </div>
+        <h1 className="mt-4 text-2xl font-bold">Access denied</h1>
         <p className="mt-2 text-muted-foreground">
-          This area is for authorised Travroidd admins only.
+          This area is restricted to authorized Travroidd administrators.
         </p>
         <div className="mt-6 flex flex-col gap-3">
-          <Button onClick={handleQuickAdminLogin} className="w-full">
-            Log in as Admin (admin@travroidd.com)
+          <Button asChild className="w-full">
+            <Link to="/auth">Sign in with Administrator Credentials</Link>
           </Button>
           <Button asChild variant="outline">
-            <Link to="/">Go home</Link>
+            <Link to="/">Return to Homepage</Link>
           </Button>
         </div>
       </section>
@@ -76,9 +79,13 @@ export const AdminPage: React.FC = () => {
     .filter((b) => b.status === 'confirmed')
     .reduce((sum, b) => sum + b.total_amount, 0);
 
-  const handleStatusChange = (id: string, status: 'confirmed' | 'cancelled') => {
-    updateBookingStatus(id, status);
-    toast.success(`Marked ${status}`);
+  const handleStatusChange = async (id: string, status: 'pending' | 'confirmed' | 'cancelled') => {
+    try {
+      await updateBookingStatus(id, status);
+      toast.success(`Marked ${status}`);
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to update status');
+    }
   };
 
   const handleSaveDest = (e: React.FormEvent) => {
@@ -118,6 +125,34 @@ export const AdminPage: React.FC = () => {
     toast.success(`Added new destination: ${newDest.name}`);
   };
 
+  const handleChangePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPass.length < 8) {
+      toast.error('New password must be at least 8 characters long');
+      return;
+    }
+    if (newPass !== confirmPass) {
+      toast.error('New password and confirmation do not match');
+      return;
+    }
+
+    setChangingPass(true);
+    try {
+      const res = await changePassword(currentPass, newPass);
+      if (res.error) {
+        toast.error(res.error.message);
+      } else {
+        toast.success('Admin password updated successfully!');
+        setShowPasswordModal(false);
+        setCurrentPass('');
+        setNewPass('');
+        setConfirmPass('');
+      }
+    } finally {
+      setChangingPass(false);
+    }
+  };
+
   return (
     <section className="mx-auto max-w-7xl px-4 py-12">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -127,7 +162,15 @@ export const AdminPage: React.FC = () => {
             Signed in as <span className="font-semibold text-primary">{user?.email}</span>
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowPasswordModal(true)}
+            className="gap-1.5"
+          >
+            <KeyRound className="h-3.5 w-3.5 text-primary" /> Change Password
+          </Button>
           <Button
             variant={activeTab === 'bookings' ? 'default' : 'outline'}
             size="sm"
@@ -148,6 +191,14 @@ export const AdminPage: React.FC = () => {
             onClick={() => setActiveTab('enquiries')}
           >
             Enquiries ({enquiries.length})
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => signOut()}
+            className="text-red-600 hover:bg-red-50"
+          >
+            Sign out
           </Button>
         </div>
       </div>
@@ -238,7 +289,7 @@ export const AdminPage: React.FC = () => {
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => handleStatusChange(b.id, 'pending' as any)}
+                          onClick={() => handleStatusChange(b.id, 'pending')}
                           title="Reset to pending"
                         >
                           <RefreshCw className="h-3 w-3" />
@@ -248,10 +299,14 @@ export const AdminPage: React.FC = () => {
                         size="sm"
                         variant="ghost"
                         className="text-destructive hover:bg-destructive/10"
-                        onClick={() => {
+                        onClick={async () => {
                           if (confirm('Delete this booking?')) {
-                            deleteBooking(b.id);
-                            toast.success('Booking deleted');
+                            try {
+                              await deleteBooking(b.id);
+                              toast.success('Booking deleted');
+                            } catch (e: any) {
+                              toast.error(e.message || 'Failed to delete');
+                            }
                           }
                         }}
                       >
@@ -588,11 +643,87 @@ export const AdminPage: React.FC = () => {
                         <Phone className="h-3.5 w-3.5 mr-1" /> Call
                       </a>
                     </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-destructive hover:bg-destructive/10"
+                      onClick={async () => {
+                        if (confirm('Delete this enquiry?')) {
+                          try {
+                            await deleteEnquiry(enq.id);
+                            toast.success('Enquiry deleted');
+                          } catch (e: any) {
+                            toast.error(e.message || 'Failed to delete');
+                          }
+                        }
+                      }}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </Button>
                   </div>
                 </div>
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Admin Password Change Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm animate-in fade-in">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+            <h3 className="text-lg font-bold text-slate-900">Change Admin Password</h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              Update the administrative account password. Minimum 8 characters with mixed characters.
+            </p>
+            <form onSubmit={handleChangePasswordSubmit} className="mt-4 space-y-3">
+              <div>
+                <Label htmlFor="admin-curr-pass">Current Password</Label>
+                <Input
+                  id="admin-curr-pass"
+                  type="password"
+                  required
+                  value={currentPass}
+                  onChange={(e) => setCurrentPass(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="admin-new-pass">New Password</Label>
+                <Input
+                  id="admin-new-pass"
+                  type="password"
+                  required
+                  value={newPass}
+                  onChange={(e) => setNewPass(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label htmlFor="admin-conf-pass">Confirm New Password</Label>
+                <Input
+                  id="admin-conf-pass"
+                  type="password"
+                  required
+                  value={confirmPass}
+                  onChange={(e) => setConfirmPass(e.target.value)}
+                  className="mt-1"
+                />
+              </div>
+              <div className="mt-4 flex gap-2">
+                <Button type="submit" disabled={changingPass}>
+                  {changingPass ? 'Updating...' : 'Save Password'}
+                </Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => setShowPasswordModal(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </section>

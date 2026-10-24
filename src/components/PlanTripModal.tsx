@@ -12,8 +12,9 @@ export const PlanTripModal: React.FC<{
   onClose: () => void;
   defaultDestination?: string;
 }> = ({ isOpen, onClose, defaultDestination }) => {
-  const { destinations, addBooking } = useBookings();
+  const { destinations, addBooking, addEnquiry } = useBookings();
   const { user } = useAuth();
+
 
   const [selectedSlug, setSelectedSlug] = useState(
     defaultDestination || (destinations[0]?.slug ?? 'goa')
@@ -48,26 +49,36 @@ export const PlanTripModal: React.FC<{
 
     setSubmitting(true);
     try {
-      await addBooking({
-        user_id: user?.id || `guest-${Date.now()}`,
-        full_name: name,
-        email: email || 'guest@example.com',
-        phone,
-        destination: currentDest.slug,
-        travel_date: date || new Date().toISOString().split('T')[0],
-        travelers,
-        price_per_person: currentDest.price,
-        total_amount: currentDest.price * travelers,
-        notes: notes || null,
-      });
+      if (user) {
+        await addBooking({
+          user_id: user.id,
+          full_name: name,
+          email: email || user.email,
+          phone,
+          destination: currentDest.slug,
+          travel_date: date || new Date().toISOString().split('T')[0],
+          travelers,
+          price_per_person: currentDest.price,
+          total_amount: currentDest.price * travelers,
+          notes: notes || null,
+        });
+      } else {
+        await addEnquiry({
+          name,
+          email: email || 'guest@travroidd.com',
+          phone,
+          message: `[Trip Plan Request: ${currentDest.name} - ${travelers} travellers - Date: ${date || 'Flexible'}] ${notes || ''}`,
+        });
+      }
 
       toast.success('Your trip enquiry has been submitted! Our team will call you.');
       onClose();
-    } catch {
-      toast.error('Failed to submit. Please try again.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to submit. Please try again.');
     } finally {
       setSubmitting(false);
     }
+
   };
 
   const handleWhatsApp = () => {
