@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useBookings } from '../context/BookingContext';
 import { formatINR } from '../data/destinations';
 import { toast } from 'sonner';
+import { extractErrorMessage } from '../lib/errorUtils';
 
 export const BookPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -80,7 +81,7 @@ export const BookPage: React.FC = () => {
       setBookingRef(created.id);
       toast.success('Booking request sent successfully!');
     } catch (err: any) {
-      toast.error(err?.message || 'Could not submit booking. Please try again.');
+      toast.error(extractErrorMessage(err, 'Could not submit booking. Please try again.'));
     } finally {
       setSubmitting(false);
     }

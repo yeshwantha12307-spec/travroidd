@@ -113,8 +113,10 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({
           }}
         >
           <img
-            src="/assets/travroidd-logo.png"
+            src="/assets/travroidd-logo.webp"
             alt="Travroidd"
+            width={160}
+            height={160}
             className="h-32 w-32 sm:h-40 sm:w-40 object-contain select-none"
             loading="eager"
           />

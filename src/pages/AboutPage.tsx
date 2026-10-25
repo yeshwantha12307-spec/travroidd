@@ -10,6 +10,7 @@ import {
   Heart,
   Plane,
 } from 'lucide-react';
+import { SEO } from '../components/SEO';
 
 export const AboutPage: React.FC = () => {
   const stats = [
@@ -60,6 +61,11 @@ export const AboutPage: React.FC = () => {
 
   return (
     <div className="flex flex-col bg-[#F6F9FE] min-h-screen pb-20">
+      <SEO
+        title="About Us — All India Travel Partner in Pondicherry | Travroidd"
+        description="Learn about Travroidd, a Pondicherry-based all India travel planner offering well-planned, budget-friendly holiday packages under ₹20,000."
+        canonical="https://www.travroidd.in/about"
+      />
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[170px] sm:min-h-[220px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img

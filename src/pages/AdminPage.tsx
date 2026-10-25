@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Plus, Trash2, Edit3, MessageCircle, Phone, RefreshCw, KeyRound, ShieldAlert } from 'lucide-react';
+import { Navigate } from 'react-router-dom';
+import { Plus, Trash2, Edit3, MessageCircle, Phone, RefreshCw, KeyRound } from 'lucide-react';
 import { StatusBadge } from '../components/StatusBadge';
 import { Button } from '../components/ui/Button';
 import { Input, Textarea, Label } from '../components/ui/Input';
@@ -9,6 +9,7 @@ import { useBookings } from '../context/BookingContext';
 import type { Destination } from '../data/destinations';
 import { formatINR } from '../data/destinations';
 import { toast } from 'sonner';
+import { extractErrorMessage, safeToastError, logDiagnostic } from '../lib/errorUtils';
 
 export const AdminPage: React.FC = () => {
   const { user, isAdmin, changePassword, signOut } = useAuth();
@@ -33,6 +34,9 @@ export const AdminPage: React.FC = () => {
   const [newPass, setNewPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const [changingPass, setChangingPass] = useState(false);
+  const [processingBookingId, setProcessingBookingId] = useState<string | null>(null);
+  const [deletingBookingId, setDeletingBookingId] = useState<string | null>(null);
+  const [processingEnquiryId, setProcessingEnquiryId] = useState<string | null>(null);
 
   // New destination form state
   const [newDest, setNewDest] = useState<Partial<Destination>>({
@@ -51,26 +55,9 @@ export const AdminPage: React.FC = () => {
     ],
   });
 
+  // Explicit server-verified authorization: redirect unauthorized customers to safe public page
   if (!isAdmin) {
-    return (
-      <section className="mx-auto max-w-md px-4 py-24 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
-          <ShieldAlert className="h-8 w-8" />
-        </div>
-        <h1 className="mt-4 text-2xl font-bold">Access denied</h1>
-        <p className="mt-2 text-muted-foreground">
-          This area is restricted to authorized Travroidd administrators.
-        </p>
-        <div className="mt-6 flex flex-col gap-3">
-          <Button asChild className="w-full">
-            <Link to="/auth">Sign in with Administrator Credentials</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link to="/">Return to Homepage</Link>
-          </Button>
-        </div>
-      </section>
-    );
+    return <Navigate to="/" replace />;
   }
 
   const totalBookings = bookings.length;
@@ -79,12 +66,78 @@ export const AdminPage: React.FC = () => {
     .filter((b) => b.status === 'confirmed')
     .reduce((sum, b) => sum + b.total_amount, 0);
 
+  const handleApproveBooking = async (id: string) => {
+    if (processingBookingId || deletingBookingId) return;
+    setProcessingBookingId(id);
+    try {
+      await updateBookingStatus(id, 'confirmed');
+      toast.success('Booking approved successfully.');
+    } catch (err: any) {
+      logDiagnostic('handleApproveBooking', err);
+      safeToastError(err, 'Unable to approve booking. Please try again.');
+    } finally {
+      setProcessingBookingId(null);
+    }
+  };
+
   const handleStatusChange = async (id: string, status: 'pending' | 'confirmed' | 'cancelled') => {
+    if (processingBookingId || deletingBookingId) return;
+    if (status === 'confirmed') {
+      return handleApproveBooking(id);
+    }
+    setProcessingBookingId(id);
     try {
       await updateBookingStatus(id, status);
-      toast.success(`Marked ${status}`);
+      toast.success(status === 'cancelled' ? 'Booking cancelled.' : 'Booking status updated.');
     } catch (err: any) {
-      toast.error(err.message || 'Failed to update status');
+      logDiagnostic('handleStatusChange', err);
+      safeToastError(err, 'Unable to update booking status. Please try again.');
+    } finally {
+      setProcessingBookingId(null);
+    }
+  };
+
+  const handleDeleteBooking = async (id: string, customerName?: string) => {
+    if (deletingBookingId || processingBookingId) return;
+    const confirmPrompt = customerName
+      ? `Are you sure you want to permanently delete the booking for ${customerName} (${id})? This action cannot be undone.`
+      : `Are you sure you want to permanently delete booking ${id}? This action cannot be undone.`;
+
+    if (!window.confirm(confirmPrompt)) {
+      return;
+    }
+
+    setDeletingBookingId(id);
+    try {
+      await deleteBooking(id);
+      toast.success('Booking deleted successfully.');
+    } catch (err: any) {
+      logDiagnostic('handleDeleteBooking', err);
+      safeToastError(err, 'Unable to delete booking. Please try again.');
+    } finally {
+      setDeletingBookingId(null);
+    }
+  };
+
+  const handleDeleteEnquiry = async (id: string, customerName?: string) => {
+    if (processingEnquiryId) return;
+    const confirmPrompt = customerName
+      ? `Are you sure you want to permanently delete the enquiry from ${customerName}?`
+      : 'Are you sure you want to delete this enquiry?';
+
+    if (!window.confirm(confirmPrompt)) {
+      return;
+    }
+
+    setProcessingEnquiryId(id);
+    try {
+      await deleteEnquiry(id);
+      toast.success('Enquiry deleted successfully.');
+    } catch (err: any) {
+      logDiagnostic('handleDeleteEnquiry', err);
+      safeToastError(err, 'Unable to delete enquiry. Please try again.');
+    } finally {
+      setProcessingEnquiryId(null);
     }
   };
 
@@ -140,7 +193,7 @@ export const AdminPage: React.FC = () => {
     try {
       const res = await changePassword(currentPass, newPass);
       if (res.error) {
-        toast.error(res.error.message);
+        toast.error(extractErrorMessage(res.error, 'Failed to update password'));
       } else {
         toast.success('Admin password updated successfully!');
         setShowPasswordModal(false);
@@ -272,14 +325,25 @@ export const AdminPage: React.FC = () => {
                         <>
                           <Button
                             size="sm"
-                            onClick={() => handleStatusChange(b.id, 'confirmed')}
+                            disabled={processingBookingId === b.id || deletingBookingId === b.id}
+                            onClick={() => handleApproveBooking(b.id)}
+                            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium shadow-sm transition-all"
+                            title="Approve booking"
                           >
-                            Confirm
+                            {processingBookingId === b.id ? (
+                              <span className="flex items-center gap-1.5">
+                                <RefreshCw className="h-3 w-3 animate-spin" /> Approving...
+                              </span>
+                            ) : (
+                              'Approve'
+                            )}
                           </Button>
                           <Button
                             size="sm"
                             variant="outline"
+                            disabled={processingBookingId === b.id || deletingBookingId === b.id}
                             onClick={() => handleStatusChange(b.id, 'cancelled')}
+                            title="Cancel booking"
                           >
                             Cancel
                           </Button>
@@ -289,28 +353,30 @@ export const AdminPage: React.FC = () => {
                         <Button
                           size="sm"
                           variant="ghost"
+                          disabled={processingBookingId === b.id || deletingBookingId === b.id}
                           onClick={() => handleStatusChange(b.id, 'pending')}
                           title="Reset to pending"
                         >
-                          <RefreshCw className="h-3 w-3" />
+                          <RefreshCw
+                            className={`h-3 w-3 ${
+                              processingBookingId === b.id ? 'animate-spin' : ''
+                            }`}
+                          />
                         </Button>
                       )}
                       <Button
                         size="sm"
                         variant="ghost"
+                        disabled={processingBookingId === b.id || deletingBookingId === b.id}
                         className="text-destructive hover:bg-destructive/10"
-                        onClick={async () => {
-                          if (confirm('Delete this booking?')) {
-                            try {
-                              await deleteBooking(b.id);
-                              toast.success('Booking deleted');
-                            } catch (e: any) {
-                              toast.error(e.message || 'Failed to delete');
-                            }
-                          }
-                        }}
+                        onClick={() => handleDeleteBooking(b.id, b.full_name)}
+                        title="Delete booking"
                       >
-                        <Trash2 className="h-3 w-3" />
+                        {deletingBookingId === b.id ? (
+                          <RefreshCw className="h-3 w-3 animate-spin text-destructive" />
+                        ) : (
+                          <Trash2 className="h-3 w-3" />
+                        )}
                       </Button>
                     </td>
                   </tr>
@@ -646,19 +712,16 @@ export const AdminPage: React.FC = () => {
                     <Button
                       size="sm"
                       variant="ghost"
+                      disabled={processingEnquiryId === enq.id}
                       className="text-destructive hover:bg-destructive/10"
-                      onClick={async () => {
-                        if (confirm('Delete this enquiry?')) {
-                          try {
-                            await deleteEnquiry(enq.id);
-                            toast.success('Enquiry deleted');
-                          } catch (e: any) {
-                            toast.error(e.message || 'Failed to delete');
-                          }
-                        }
-                      }}
+                      onClick={() => handleDeleteEnquiry(enq.id, enq.name)}
+                      title="Delete enquiry"
                     >
-                      <Trash2 className="h-3.5 w-3.5" />
+                      {processingEnquiryId === enq.id ? (
+                        <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-3.5 w-3.5" />
+                      )}
                     </Button>
                   </div>
                 </div>

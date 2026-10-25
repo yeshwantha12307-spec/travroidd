@@ -25,8 +25,10 @@ export const Logo: React.FC<{
     <div className={`inline-flex items-center gap-2 sm:gap-2.5 ${className}`}>
       {/* Globe + Airplane Logo Emblem */}
       <img
-        src="/assets/travroidd-logo.png"
-        alt="Travroidd Logo"
+        src="/assets/travroidd-logo.webp"
+        alt="Travroidd — All India Travel Partner Logo"
+        width={40}
+        height={40}
         className={`${imgSizeClass} object-contain shrink-0`}
       />
 

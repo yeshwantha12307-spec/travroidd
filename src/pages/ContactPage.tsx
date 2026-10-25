@@ -8,6 +8,8 @@ import {
   WORKING_HOURS,
 } from '../data/destinations';
 import { toast } from 'sonner';
+import { extractErrorMessage } from '../lib/errorUtils';
+import { SEO } from '../components/SEO';
 
 export const ContactPage: React.FC = () => {
   const { destinations, addEnquiry } = useBookings();
@@ -52,7 +54,7 @@ export const ContactPage: React.FC = () => {
       toast.success('Your message has been sent successfully! We will call you soon.');
       form.reset();
     } catch (err: any) {
-      toast.error(err?.message || 'Failed to send message. Please try again.');
+      toast.error(extractErrorMessage(err, 'Failed to send message. Please try again.'));
     } finally {
       setSubmitting(false);
     }
@@ -68,6 +70,11 @@ export const ContactPage: React.FC = () => {
 
   return (
     <div className="flex flex-col bg-[#F6F9FE] min-h-screen pb-20">
+      <SEO
+        title="Contact Travroidd — Pondicherry Office, Phone & WhatsApp"
+        description="Get in touch with Travroidd travel agency in Puducherry. Plan your all India holiday trip via WhatsApp (+91 7339111948) or submit an enquiry."
+        canonical="https://www.travroidd.in/contact"
+      />
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[170px] sm:min-h-[220px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img

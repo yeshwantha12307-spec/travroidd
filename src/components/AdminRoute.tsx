@@ -1,8 +1,7 @@
 import React from 'react';
-import { Navigate, useLocation, Link } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { Button } from './ui/Button';
 
 export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, isAdmin, loading } = useAuth();
@@ -16,29 +15,14 @@ export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }
     );
   }
 
-  // Not logged in -> send to auth
+  // Not logged in -> redirect unauthenticated visitors to login
   if (!user) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // Logged in but not admin -> strictly denied, no bypass buttons
+  // Logged in customer without admin privileges -> redirect to safe public page
   if (!isAdmin) {
-    return (
-      <section className="mx-auto max-w-md px-4 py-24 text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
-          <ShieldAlert className="h-8 w-8" />
-        </div>
-        <h1 className="mt-4 text-2xl font-bold text-slate-900">Access Denied</h1>
-        <p className="mt-2 text-sm text-slate-600">
-          You are signed in as <span className="font-semibold">{user.email}</span>, which does not have administrative privileges.
-        </p>
-        <div className="mt-6 flex flex-col gap-3">
-          <Button asChild variant="outline">
-            <Link to="/">Return to Homepage</Link>
-          </Button>
-        </div>
-      </section>
-    );
+    return <Navigate to="/" replace />;
   }
 
   // Admin has not yet updated initial temporary password -> block dashboard and require password change

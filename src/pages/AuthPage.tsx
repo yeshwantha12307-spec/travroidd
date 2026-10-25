@@ -7,6 +7,7 @@ import { Input, Label } from '../components/ui/Input';
 import { useAuth } from '../context/AuthContext';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { toast } from 'sonner';
+import { extractErrorMessage } from '../lib/errorUtils';
 
 export const AuthPage: React.FC = () => {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
@@ -27,19 +28,27 @@ export const AuthPage: React.FC = () => {
       const params = new URLSearchParams(hash.startsWith('#') ? hash.substring(1) : search);
       const errDesc = params.get('error_description') || params.get('error');
       if (errDesc) {
-        if (errDesc.toLowerCase().includes('provider') || errDesc.toLowerCase().includes('not enabled')) {
+        const cleanErr = decodeURIComponent(errDesc.replace(/\+/g, ' '));
+        if (cleanErr.toLowerCase().includes('provider') || cleanErr.toLowerCase().includes('not enabled')) {
           setShowGoogleModal(true);
         } else {
-          toast.error(decodeURIComponent(errDesc.replace(/\+/g, ' ')));
+          toast.error(`Google Login: ${cleanErr}`);
         }
+        // Clean URL to avoid re-triggering error on refresh
+        window.history.replaceState(null, '', window.location.pathname);
       }
     }
   }, []);
 
-  // If already authenticated, redirect
+  // If already authenticated, redirect to target page or /admin
   useEffect(() => {
     if (user) {
-      navigate(user.role === 'admin' ? '/admin' : from, { replace: true });
+      const savedFrom = sessionStorage.getItem('auth_redirect_from');
+      if (savedFrom) {
+        sessionStorage.removeItem('auth_redirect_from');
+      }
+      const target = user.role === 'admin' ? '/admin' : (savedFrom || from || '/');
+      navigate(target, { replace: true });
     }
   }, [user, navigate, from]);
 
@@ -67,7 +76,7 @@ export const AuthPage: React.FC = () => {
       if (mode === 'signup') {
         const res = await signUp(email, password, name);
         if (res.error) {
-          toast.error(res.error.message);
+          toast.error(extractErrorMessage(res.error, 'Sign up failed. Please try again.'));
           return;
         }
         toast.success('Account created successfully!');
@@ -75,7 +84,7 @@ export const AuthPage: React.FC = () => {
       } else {
         const res = await signIn(email, password);
         if (res.error) {
-          toast.error(res.error.message);
+          toast.error(extractErrorMessage(res.error, 'Sign in failed. Please check your credentials.'));
           return;
         }
         toast.success('Welcome back to Travroidd!');
@@ -89,16 +98,20 @@ export const AuthPage: React.FC = () => {
   const handleGoogleSignIn = async () => {
     setSubmitting(true);
     try {
-      const res = await signInWithGoogle();
+      if (from && from !== '/auth') {
+        sessionStorage.setItem('auth_redirect_from', from);
+      }
+      const res = await signInWithGoogle('/auth');
       if (res.error) {
+        const errMsg = extractErrorMessage(res.error, '');
         if (
-          res.error.message.toLowerCase().includes('not enabled') ||
-          res.error.message.toLowerCase().includes('unsupported') ||
-          res.error.message.toLowerCase().includes('provider')
+          errMsg.toLowerCase().includes('not enabled') ||
+          errMsg.toLowerCase().includes('unsupported') ||
+          errMsg.toLowerCase().includes('provider')
         ) {
           setShowGoogleModal(true);
         } else {
-          toast.error(res.error.message);
+          toast.error(errMsg || 'Google sign-in is currently unavailable.');
         }
       }
     } finally {

@@ -11,6 +11,7 @@ import {
 import { useBookings } from '../context/BookingContext';
 import { formatINR, getWhatsAppUrl } from '../data/destinations';
 import { PlanTripModal } from '../components/PlanTripModal';
+import { SEO } from '../components/SEO';
 
 export const DestinationDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -41,8 +42,41 @@ export const DestinationDetailPage: React.FC = () => {
     window.open(getWhatsAppUrl(msg), '_blank');
   };
 
+  const tripJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'TouristTrip',
+    name: dest.title || `${dest.name} Tour Package`,
+    description: dest.description,
+    touristType: dest.category,
+    offers: {
+      '@type': 'Offer',
+      price: dest.price,
+      priceCurrency: 'INR',
+      availability: 'https://schema.org/InStock',
+      url: `https://www.travroidd.in/destinations/${dest.slug}`,
+    },
+    provider: {
+      '@type': 'TravelAgency',
+      name: 'Travroidd',
+      url: 'https://www.travroidd.in',
+      telephone: '+91-7339111948',
+    },
+    itinerary: dest.itinerary.map((it) => ({
+      '@type': 'Day',
+      name: `${it.day}: ${it.title}`,
+      description: it.detail,
+    })),
+  };
+
   return (
     <div className="flex flex-col bg-slate-50 min-h-screen pb-20">
+      <SEO
+        title={`${dest.name} Tour Package (${dest.duration}) — Under ${dest.budgetCap || formatINR(dest.price)} | Travroidd`}
+        description={`${dest.description} Explore ${dest.name} with Travroidd, Puducherry. Hotel stay, sightseeing, and breakfast included.`}
+        canonical={`https://www.travroidd.in/destinations/${dest.slug}`}
+        ogImage={dest.image}
+        jsonLd={tripJsonLd}
+      />
       {/* HERO BANNER */}
       <section className="relative h-[260px] sm:h-[340px] md:h-[420px] w-full overflow-hidden bg-slate-900">
         <img
@@ -55,7 +89,7 @@ export const DestinationDetailPage: React.FC = () => {
         {/* Top Left Badge: Under ₹22,000 */}
         <div className="absolute left-3 top-3 sm:left-6 sm:top-6 z-10">
           <div className="rounded-full bg-[#0B5ED7] px-3 sm:px-4 py-1 sm:py-1.5 text-[11px] sm:text-xs font-bold text-white shadow-lg border border-white/20">
-            {dest.budgetCap || 'Under ₹22,000'}
+            {dest.budgetCap || (dest.price <= 3000 ? 'Under ₹3,000' : dest.price <= 10000 ? 'Under ₹10,000' : 'Under ₹20,000')}
           </div>
         </div>
 

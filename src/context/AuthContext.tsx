@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface User {
   id: string;
@@ -15,7 +15,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, pass: string) => Promise<{ error: Error | null; mustChangePassword?: boolean }>;
   signUp: (email: string, pass: string, name?: string) => Promise<{ error: Error | null }>;
-  signInWithGoogle: () => Promise<{ error: Error | null }>;
+  signInWithGoogle: (redirectPath?: string) => Promise<{ error: Error | null }>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -39,12 +39,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   // Helper to extract safe user object from Supabase or server
-  // Server-controlled role: MUST be in app_metadata.role or verified by backend.
+  // Server-controlled role: MUST be in app_metadata.role (signed by Supabase Auth)
+  // or verified from the server-side public.profiles table.
   // Client-editable user_metadata and raw email strings are NEVER trusted for privilege assignment.
-  const buildUserFromSupabase = (sbUser: any): User => {
+  const buildUserFromSupabase = (sbUser: any, profileRole?: string | null): User => {
     const meta = sbUser.user_metadata || {};
     const appMeta = sbUser.app_metadata || {};
-    const isAdmin = appMeta.role === 'admin';
+    const isAdmin = appMeta.role === 'admin' || profileRole === 'admin';
     return {
       id: sbUser.id,
       email: sbUser.email?.toLowerCase() || '',
@@ -54,40 +55,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   };
 
-
   // Restore session from Supabase and Backend API
   const refreshUser = useCallback(async () => {
     try {
       // 1. Check Supabase Auth session first
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        const currentUser = buildUserFromSupabase(session.user);
+        let profileRole: string | null = null;
+        if (isSupabaseConfigured) {
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('id', session.user.id)
+              .maybeSingle();
+            if (profile?.role) {
+              profileRole = profile.role;
+            }
+          } catch {
+            // Role lookup failure: strictly defaults to non-admin unless app_metadata guarantees it
+          }
+        }
+
+        const currentUser = buildUserFromSupabase(session.user, profileRole);
         setUser(currentUser);
         setIsAdmin(currentUser.role === 'admin');
         setLoading(false);
         return;
       }
 
-      // 2. Check Backend Server session
-      const res = await fetch('/api/auth/me', {
-        headers: { Accept: 'application/json' },
-        credentials: 'include',
-      });
+      // 2. Check Backend Server session ONLY if Supabase is unconfigured (local dev)
+      if (!isSupabaseConfigured) {
+        const res = await fetch('/api/auth/me', {
+          headers: { Accept: 'application/json' },
+          credentials: 'include',
+        }).catch(() => null);
 
-      if (res.ok) {
-        const data = await res.json();
-        if (data && data.user) {
-          setUser(data.user);
-          setIsAdmin(data.user.role === 'admin');
-        } else {
-          setUser(null);
-          setIsAdmin(false);
+        if (res && res.ok) {
+          const data = await res.json().catch(() => null);
+          if (data && data.user) {
+            setUser(data.user);
+            setIsAdmin(data.user.role === 'admin');
+            setLoading(false);
+            return;
+          }
         }
-      } else {
-        setUser(null);
-        setIsAdmin(false);
       }
+
+      setUser(null);
+      setIsAdmin(false);
     } catch {
+      // Any error during session retrieval strictly results in logged-out / non-admin state
       setUser(null);
       setIsAdmin(false);
     } finally {
@@ -101,18 +119,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen to Supabase auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (session?.user) {
-        const currentUser = buildUserFromSupabase(session.user);
+        let profileRole: string | null = null;
+        if (isSupabaseConfigured) {
+          try {
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('role')
+              .eq('id', session.user.id)
+              .maybeSingle();
+            if (profile?.role) {
+              profileRole = profile.role;
+            }
+          } catch {}
+        }
+
+        const currentUser = buildUserFromSupabase(session.user, profileRole);
         setUser(currentUser);
         setIsAdmin(currentUser.role === 'admin');
       } else {
-        // Only clear if server also has no session
-        const res = await fetch('/api/auth/me', { credentials: 'include' }).catch(() => null);
-        if (res && res.ok) {
-          const data = await res.json().catch(() => null);
-          if (data?.user) {
-            setUser(data.user);
-            setIsAdmin(data.user.role === 'admin');
-            return;
+        // Only check local server if Supabase is unconfigured
+        if (!isSupabaseConfigured) {
+          const res = await fetch('/api/auth/me', { credentials: 'include' }).catch(() => null);
+          if (res && res.ok) {
+            const data = await res.json().catch(() => null);
+            if (data?.user) {
+              setUser(data.user);
+              setIsAdmin(data.user.role === 'admin');
+              return;
+            }
           }
         }
         setUser(null);
@@ -244,13 +278,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (redirectPath = '/auth') => {
     try {
+      // Robust canonical redirect resolution:
+      // In production, enforce the canonical production origin (https://www.travroidd.in)
+      // In preview (e.g. travroidd-eta.vercel.app) or local development, use window.location.origin
+      let origin = window.location.origin;
+      const hostname = window.location.hostname.toLowerCase();
+      if (hostname === 'www.travroidd.in' || hostname === 'travroidd.in') {
+        origin = 'https://www.travroidd.in';
+      }
+
+      const cleanPath = redirectPath.startsWith('/') ? redirectPath : `/${redirectPath}`;
+      const redirectTo = `${origin}${cleanPath}`;
+
       // Official Supabase Google OAuth flow
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: window.location.origin,
+          redirectTo,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -262,8 +308,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { error: new Error(error.message) };
       }
       return { error: null };
-    } catch {
-      return { error: new Error('Failed to initialize Google OAuth.') };
+    } catch (err: any) {
+      return { error: new Error(err?.message || 'Failed to initialize Google OAuth.') };
     }
   };
 

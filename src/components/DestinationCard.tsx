@@ -15,6 +15,7 @@ export const DestinationCard: React.FC<{ d: Destination }> = ({ d }) => {
           src={d.image}
           alt={d.name}
           loading="lazy"
+          decoding="async"
           width={1280}
           height={864}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"

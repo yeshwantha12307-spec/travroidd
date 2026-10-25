@@ -3,6 +3,37 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Compass, RotateCcw } from 'lucide-react';
 import { useBookings } from '../context/BookingContext';
 import { formatINR } from '../data/destinations';
+import { SEO } from '../components/SEO';
+
+const TOP_ORDER = [
+  'goa',
+  'manali',
+  'kerala',
+  'udaipur',
+  'hawa-mahal',
+  'kashmir',
+  'darjeeling',
+  'andaman',
+  'golden-temple',
+  'mysuru-palace',
+  'taj-mahal',
+  'tawang',
+  'dharamshala',
+  'kasol',
+  'shimla',
+  'nepal',
+  'maharashtra',
+  'hyderabad',
+  'varkala',
+  'party-package',
+  'rameswaram',
+  'kanyakumari',
+  'hampi',
+  'coorg',
+  'ooty',
+  'kodaikanal',
+  'munnar',
+];
 
 export const DestinationsPage: React.FC = () => {
   const { destinations } = useBookings();
@@ -23,23 +54,14 @@ export const DestinationsPage: React.FC = () => {
       : 'All'
   );
 
+  const [showAll, setShowAll] = useState(false);
+
   const states = useMemo(() => {
     const set = new Set(destinations.map((d) => d.state));
     return ['All', ...Array.from(set)];
   }, [destinations]);
 
-  const topOrder = [
-    'goa',
-    'manali',
-    'kerala',
-    'udaipur',
-    'rajasthan',
-    'kashmir',
-    'darjeeling',
-    'andaman',
-  ];
-
-  const filteredDestinations = useMemo(() => {
+  const sortedDestinations = useMemo(() => {
     const list = destinations.filter((dest) => {
       const q = searchQuery.toLowerCase();
       const matchesSearch =
@@ -57,18 +79,18 @@ export const DestinationsPage: React.FC = () => {
       return matchesSearch && matchesState && matchesBudget;
     });
 
-    const sorted = list.sort((a, b) => {
-      const idxA = topOrder.indexOf(a.slug);
-      const idxB = topOrder.indexOf(b.slug);
+    return list.sort((a, b) => {
+      const idxA = TOP_ORDER.indexOf(a.slug);
+      const idxB = TOP_ORDER.indexOf(b.slug);
       if (idxA !== -1 && idxB !== -1) return idxA - idxB;
       if (idxA !== -1) return -1;
       if (idxB !== -1) return 1;
       return 0;
     });
-
-    const isFiltered = !!searchQuery || selectedState !== 'All' || selectedBudget !== 'All';
-    return isFiltered ? sorted : sorted.slice(0, 8);
   }, [destinations, searchQuery, selectedState, selectedBudget]);
+
+  const isFiltered = !!searchQuery || selectedState !== 'All' || selectedBudget !== 'All';
+  const filteredDestinations = (isFiltered || showAll) ? sortedDestinations : sortedDestinations.slice(0, 8);
 
   const resetFilters = () => {
     setSearchQuery('');
@@ -78,6 +100,11 @@ export const DestinationsPage: React.FC = () => {
 
   return (
     <div className="flex flex-col bg-slate-50 min-h-screen">
+      <SEO
+        title="All India Tour Packages & Top Destinations | Travroidd"
+        description="Explore handpicked holiday tour packages across India under ₹20,000. Filter destinations by state, budget, and travel style with Travroidd."
+        canonical="https://www.travroidd.in/destinations"
+      />
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[260px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img
@@ -179,6 +206,7 @@ export const DestinationsPage: React.FC = () => {
 
       {/* DESTINATION CARDS GRID */}
       <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:py-12 sm:px-6">
+        <h2 className="sr-only">Explore All India Holiday Packages</h2>
         <div className="grid grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
           {filteredDestinations.map((dest) => (
             <Link
@@ -215,6 +243,17 @@ export const DestinationsPage: React.FC = () => {
             </Link>
           ))}
         </div>
+
+        {!isFiltered && sortedDestinations.length > 8 && (
+          <div className="mt-10 text-center">
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="inline-flex items-center gap-2 rounded-full border-2 border-[#0B5ED7] bg-white px-8 py-3 text-xs sm:text-sm font-extrabold text-[#0B5ED7] shadow-sm transition hover:bg-[#0B5ED7] hover:text-white cursor-pointer active:scale-95"
+            >
+              <span>{showAll ? 'Show Fewer Destinations' : `View All ${sortedDestinations.length} Destinations`}</span>
+            </button>
+          </div>
+        )}
 
         {filteredDestinations.length === 0 && (
           <div className="rounded-2xl border bg-white p-16 text-center shadow-sm">

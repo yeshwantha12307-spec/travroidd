@@ -17,6 +17,21 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 -- Enable RLS on profiles
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
+-- Helper function to check if current user is admin without recursion
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN (
+    (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin' OR
+    (auth.jwt() ->> 'email') = 'admin@travroidd.com' OR
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER STABLE SET search_path = public, pg_temp;
+
 -- Profiles Policies
 DROP POLICY IF EXISTS "Public profiles are viewable by owner or admin" ON public.profiles;
 CREATE POLICY "Public profiles are viewable by owner or admin"
@@ -24,7 +39,7 @@ CREATE POLICY "Public profiles are viewable by owner or admin"
   TO authenticated
   USING (
     auth.uid() = id OR
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
+    (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin' OR
     (auth.jwt() ->> 'email') = 'admin@travroidd.com'
   );
 
@@ -72,8 +87,7 @@ CREATE POLICY "Customers view own bookings, admins view all"
   TO authenticated
   USING (
     auth.uid() = user_id OR
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-    (auth.jwt() ->> 'email') = 'admin@travroidd.com'
+    public.is_admin()
   );
 
 -- 2. Authenticated customers can create bookings for themselves with initial 'pending' status.
@@ -93,8 +107,7 @@ CREATE POLICY "Only admins can update booking status"
   ON public.bookings FOR UPDATE
   TO authenticated
   USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-    (auth.jwt() ->> 'email') = 'admin@travroidd.com'
+    public.is_admin()
   );
 
 -- 4. Only admins can delete bookings.
@@ -103,8 +116,7 @@ CREATE POLICY "Only admins can delete bookings"
   ON public.bookings FOR DELETE
   TO authenticated
   USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-    (auth.jwt() ->> 'email') = 'admin@travroidd.com'
+    public.is_admin()
   );
 
 -- 3. Enquiries Table (Customer inquiries)
@@ -134,8 +146,7 @@ CREATE POLICY "Only admins can view enquiries"
   ON public.enquiries FOR SELECT
   TO authenticated
   USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-    (auth.jwt() ->> 'email') = 'admin@travroidd.com'
+    public.is_admin()
   );
 
 -- 3. Only authenticated administrators can delete enquiries.
@@ -144,8 +155,7 @@ CREATE POLICY "Only admins can delete enquiries"
   ON public.enquiries FOR DELETE
   TO authenticated
   USING (
-    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin') OR
-    (auth.jwt() ->> 'email') = 'admin@travroidd.com'
+    public.is_admin()
   );
 
 -- 4. Automatic Profile Trigger on Auth Signup
@@ -157,14 +167,17 @@ BEGIN
     new.id,
     new.email,
     COALESCE(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1)),
-    COALESCE(new.raw_user_meta_data->>'role', 'customer')
+    CASE
+      WHEN (new.raw_app_meta_data->>'role') = 'admin' OR new.email = 'admin@travroidd.com' THEN 'admin'
+      ELSE 'customer'
+    END
   )
   ON CONFLICT (id) DO UPDATE
   SET email = EXCLUDED.email,
       name = COALESCE(EXCLUDED.name, public.profiles.name);
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 
 DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created

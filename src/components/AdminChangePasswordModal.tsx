@@ -5,6 +5,8 @@ import { Button } from './ui/Button';
 import { Input, Label } from './ui/Input';
 import { toast } from 'sonner';
 
+import { extractErrorMessage } from '../lib/errorUtils';
+
 export const AdminChangePasswordModal: React.FC = () => {
   const { user, changePassword } = useAuth();
   const [currentPassword, setCurrentPassword] = useState('');
@@ -33,7 +35,7 @@ export const AdminChangePasswordModal: React.FC = () => {
     try {
       const res = await changePassword(currentPassword, newPassword);
       if (res.error) {
-        toast.error(res.error.message);
+        toast.error(extractErrorMessage(res.error, 'Failed to update password'));
       } else {
         toast.success('Admin password updated successfully!');
       }

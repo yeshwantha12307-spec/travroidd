@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { SEO } from '../components/SEO';
 
 interface GalleryItem {
   id: number;
@@ -136,6 +137,11 @@ export const GalleryPage: React.FC = () => {
 
   return (
     <div className="flex flex-col bg-[#F6F9FE] min-h-screen pb-20">
+      <SEO
+        title="Travel Photo Gallery — Moments from Our Journeys | Travroidd"
+        description="Browse real travel photos and destination highlights from Travroidd tour packages across India."
+        canonical="https://www.travroidd.in/gallery"
+      />
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[170px] sm:min-h-[220px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img
@@ -176,6 +182,7 @@ export const GalleryPage: React.FC = () => {
 
       {/* PHOTO GRID */}
       <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8 sm:px-6">
+        <h2 className="sr-only">Travroidd Travel Photo Gallery</h2>
         <div className="grid grid-cols-1 min-[420px]:grid-cols-2 md:grid-cols-3 gap-3.5 sm:gap-6">
           {filteredItems.map((item) => (
             <div

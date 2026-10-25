@@ -59,9 +59,18 @@ export default async function handler(req, res) {
     if (supabaseKey && supabaseKey.length > 20) {
       try {
         const supabase = createClient(supabaseUrl, supabaseKey);
-        await supabase.from('enquiries').insert([enquiryRecord]);
+        const { error: insertError } = await supabase.from('enquiries').insert([enquiryRecord]);
+        if (insertError) {
+          console.error('[Enquiry API Error] Supabase insert failed:', insertError.message);
+          return res.status(500).json({
+            error: 'Failed to record enquiry in database. Please contact us directly.',
+          });
+        }
       } catch (sbErr) {
-        console.warn('[Enquiry API] Supabase write skipped or table unmigrated:', sbErr?.message);
+        console.error('[Enquiry API Exception] Database operation failed:', sbErr?.message);
+        return res.status(500).json({
+          error: 'An unexpected error occurred while saving your enquiry.',
+        });
       }
     }
 

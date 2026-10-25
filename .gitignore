@@ -35,3 +35,7 @@ server/data/*.db-journal
 server/data/*.db-wal
 server/data/*.db-shm
 
+# Temporary audit & scratch assets
+catalog_assets/
+public/audit_screenshots/
+

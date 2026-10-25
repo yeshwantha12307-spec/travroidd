@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { formatINR, getWhatsAppUrl } from '../data/destinations';
 import { toast } from 'sonner';
 import { Logo } from './Logo';
+import { extractErrorMessage } from '../lib/errorUtils';
 
 export const PlanTripModal: React.FC<{
   isOpen: boolean;
@@ -75,7 +76,7 @@ export const PlanTripModal: React.FC<{
       toast.success('Your trip enquiry has been submitted! Our team will call you.');
       onClose();
     } catch (err: any) {
-      toast.error(err?.message || 'Failed to submit. Please try again.');
+      toast.error(extractErrorMessage(err, 'Failed to submit. Please try again.'));
     } finally {
       setSubmitting(false);
     }

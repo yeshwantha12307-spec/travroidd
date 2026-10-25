@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, MessageCircle } from 'lucide-react';
 import { Logo } from './Logo';
+import { InstagramIcon } from './InstagramIcon';
 import {
   WHATSAPP_PHONE,
   EMAIL_ADDRESS,
@@ -21,17 +22,31 @@ export const Footer: React.FC = () => {
               Pack your bags. Make your memory.
             </p>
 
-            <div className="pt-2">
-              {/* WhatsApp as sole contact messaging option */}
+            <div className="flex flex-wrap items-center gap-2.5 pt-2">
+              {/* WhatsApp button */}
               <a
                 href={getWhatsAppUrl()}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
                 aria-label="Chat on WhatsApp"
-                className="inline-flex min-h-[44px] items-center gap-2.5 rounded-full bg-[#25D366] px-5 py-2.5 text-xs font-bold text-white shadow-md transition hover:bg-[#20ba5a] hover:scale-105 active:scale-95"
+                title="Chat with Travroidd on WhatsApp"
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-xs font-bold text-white shadow-md transition hover:bg-[#20ba5a] hover:scale-105 active:scale-95"
               >
                 <MessageCircle className="h-4 w-4" />
-                <span>Chat on WhatsApp</span>
+                <span>WhatsApp</span>
+              </a>
+
+              {/* Instagram button */}
+              <a
+                href="https://www.instagram.com/travroidd/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow Travroidd on Instagram"
+                title="Follow Travroidd on Instagram"
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-gradient-to-r from-[#f09433] via-[#dc2743] to-[#bc1888] px-4 py-2 text-xs font-bold text-white shadow-md transition hover:opacity-95 hover:scale-105 active:scale-95"
+              >
+                <InstagramIcon className="h-4 w-4 text-white" />
+                <span>Instagram</span>
               </a>
             </div>
           </div>

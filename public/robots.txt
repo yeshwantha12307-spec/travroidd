@@ -1,0 +1,43 @@
+# robots.txt for https://www.travroidd.in
+User-agent: *
+Allow: /
+Allow: /destinations
+Allow: /destinations/*
+Allow: /budget-trips
+Allow: /about
+Allow: /gallery
+Allow: /contact
+Allow: /faq
+Allow: /privacy
+Allow: /terms
+Allow: /assets/
+Allow: /favicon.ico
+Allow: /favicon.png
+Allow: /favicon*.png
+Allow: /apple-touch-icon.png
+Allow: /android-chrome*.png
+
+# Explicitly ensure Googlebot-Image has full access to site icons and brand media
+User-agent: Googlebot-Image
+Allow: /
+Allow: /assets/
+Allow: /favicon.ico
+Allow: /favicon.png
+Allow: /favicon*.png
+Allow: /apple-touch-icon.png
+
+# Disallow private, administrative, and authenticated checkout flows
+User-agent: *
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /auth
+Disallow: /auth/*
+Disallow: /my-bookings
+Disallow: /my-bookings/*
+Disallow: /book
+Disallow: /book/*
+Disallow: /api/
+Disallow: /api/*
+
+# Reference production XML sitemap
+Sitemap: https://www.travroidd.in/sitemap.xml

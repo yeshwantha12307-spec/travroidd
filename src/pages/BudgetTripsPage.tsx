@@ -10,54 +10,81 @@ import {
 } from 'lucide-react';
 import { useBookings } from '../context/BookingContext';
 import { formatINR } from '../data/destinations';
+import { SEO } from '../components/SEO';
+
+const CATEGORIES = [
+  { name: 'Beach', icon: Palmtree },
+  { name: 'Hills', icon: Mountain },
+  { name: 'Adventure', icon: Compass },
+  { name: 'Heritage', icon: Landmark },
+  { name: 'Nature', icon: Trees },
+  { name: 'Weekend Getaways', icon: Sun },
+];
+
+const BUDGET_ORDER = [
+  'goa',
+  'ooty',
+  'kodaikanal',
+  'munnar',
+  'rameswaram',
+  'kanyakumari',
+  'hampi',
+  'coorg',
+  'golden-temple',
+  'mysuru-palace',
+  'taj-mahal',
+  'hawa-mahal',
+  'tawang',
+  'kashmir',
+  'dharamshala',
+  'kasol',
+  'shimla',
+  'nepal',
+  'maharashtra',
+  'hyderabad',
+  'varkala',
+  'party-package',
+  'darjeeling',
+  'udaipur',
+  'kerala',
+  'manali',
+  'andaman',
+];
 
 export const BudgetTripsPage: React.FC = () => {
   const { destinations } = useBookings();
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get('category') || 'All';
-
   const [activeCategory, setActiveCategory] = useState(categoryParam);
-
-  const categories = [
-    { name: 'Beach', icon: Palmtree },
-    { name: 'Hills', icon: Mountain },
-    { name: 'Adventure', icon: Compass },
-    { name: 'Heritage', icon: Landmark },
-    { name: 'Nature', icon: Trees },
-    { name: 'Weekend Getaways', icon: Sun },
-  ];
-
-  const budgetOrder = [
-    'goa',
-    'ooty',
-    'kodaikanal',
-    'munnar',
-    'rameswaram',
-    'kanyakumari',
-    'hampi',
-    'coorg',
-  ];
+  const [showAll, setShowAll] = useState(false);
 
   const budgetTrips = destinations
     .filter((d) => {
       if (d.price > 20000) return false;
       if (activeCategory === 'All') return true;
-      if (activeCategory === 'Weekend Getaways') return d.duration.includes('3 Days');
+      if (activeCategory === 'Weekend Getaways') {
+        return d.category === 'Weekend Getaways' || d.duration.includes('2 Days') || d.duration.includes('3 Days');
+      }
       return d.category === activeCategory;
     })
     .sort((a, b) => {
-      const idxA = budgetOrder.indexOf(a.slug);
-      const idxB = budgetOrder.indexOf(b.slug);
+      const idxA = BUDGET_ORDER.indexOf(a.slug);
+      const idxB = BUDGET_ORDER.indexOf(b.slug);
       if (idxA !== -1 && idxB !== -1) return idxA - idxB;
       if (idxA !== -1) return -1;
       if (idxB !== -1) return 1;
       return 0;
     });
 
-  const displayedTrips = activeCategory === 'All' ? budgetTrips.slice(0, 8) : budgetTrips;
+  const displayedTrips = (activeCategory !== 'All' || showAll) ? budgetTrips : budgetTrips.slice(0, 8);
 
   return (
     <div className="flex flex-col bg-slate-50 min-h-screen">
+      <SEO
+        title="All India Budget Trips Under ₹20,000 | Travroidd"
+        description="Discover all India budget trips under ₹20,000 with Travroidd. Handpicked holiday packages to Goa, Manali, Munnar, Ooty, Kashmir, Andaman and more."
+        canonical="https://www.travroidd.in/budget-trips"
+      />
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[260px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img
@@ -80,7 +107,7 @@ export const BudgetTripsPage: React.FC = () => {
       {/* CATEGORY FILTER CIRCLES */}
       <section className="mx-auto w-full max-w-7xl px-4 pt-8 pb-4 sm:pt-10 sm:pb-6 sm:px-6">
         <div className="flex items-center justify-start sm:justify-center gap-4 sm:gap-8 overflow-x-auto pb-3 pt-1 scrollbar-none px-1">
-          {categories.map((cat) => {
+          {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             const isActive = activeCategory === cat.name;
             return (
@@ -113,6 +140,7 @@ export const BudgetTripsPage: React.FC = () => {
 
       {/* BUDGET TRIP CARDS GRID */}
       <section className="mx-auto w-full max-w-7xl px-4 py-6 sm:py-8 sm:px-6">
+        <h2 className="sr-only">Handpicked All India Tour Packages Under ₹20,000</h2>
         <div className="grid grid-cols-1 min-[360px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
           {displayedTrips.map((dest) => (
             <div
@@ -128,7 +156,7 @@ export const BudgetTripsPage: React.FC = () => {
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute left-2.5 top-2.5 sm:left-3 sm:top-3 rounded-full bg-[#0B5ED7] px-2.5 py-0.5 sm:px-3 sm:py-1 text-[10px] sm:text-[11px] font-bold text-white shadow-md">
-                  Under ₹20,000
+                  {dest.budgetCap ?? (dest.price <= 3000 ? 'Under ₹3,000' : dest.price <= 10000 ? 'Under ₹10,000' : 'Under ₹20,000')}
                 </div>
               </div>
 
@@ -161,6 +189,17 @@ export const BudgetTripsPage: React.FC = () => {
             </div>
           ))}
         </div>
+
+        {activeCategory === 'All' && budgetTrips.length > 8 && (
+          <div className="mt-10 text-center">
+            <button
+              onClick={() => setShowAll(!showAll)}
+              className="inline-flex items-center gap-2 rounded-full border-2 border-[#0B5ED7] bg-white px-8 py-3 text-xs sm:text-sm font-extrabold text-[#0B5ED7] shadow-sm transition hover:bg-[#0B5ED7] hover:text-white cursor-pointer active:scale-95"
+            >
+              <span>{showAll ? 'Show Fewer Trips' : `View All ${budgetTrips.length} Budget Trips`}</span>
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Plus, Minus, MessageCircle } from 'lucide-react';
 import { getWhatsAppUrl } from '../data/destinations';
+import { SEO } from '../components/SEO';
 
 interface FAQItem {
   id: number;
@@ -50,8 +51,27 @@ export const FAQPage: React.FC = () => {
     },
   ];
 
+  const faqJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((f) => ({
+      '@type': 'Question',
+      name: f.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: f.answer,
+      },
+    })),
+  };
+
   return (
     <div className="flex flex-col bg-[#F6F9FE] min-h-screen pb-20">
+      <SEO
+        title="Frequently Asked Questions (FAQ) — Trip Booking Guide | Travroidd"
+        description="Get answers about booking India holiday tour packages with Travroidd, cancellation policies, inclusions, payment methods and customized trips."
+        canonical="https://www.travroidd.in/faq"
+        jsonLd={faqJsonLd}
+      />
       {/* BANNER SECTION */}
       <section className="relative flex min-h-[170px] sm:min-h-[220px] items-center justify-center overflow-hidden bg-slate-900 py-16 text-center text-white">
         <img

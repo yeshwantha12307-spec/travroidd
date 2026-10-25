@@ -1,10 +1,16 @@
 import React from 'react';
 import { FileText } from 'lucide-react';
 import { EMAIL_ADDRESS, WHATSAPP_PHONE } from '../data/destinations';
+import { SEO } from '../components/SEO';
 
 export const TermsOfServicePage: React.FC = () => {
   return (
     <section className="mx-auto max-w-4xl px-4 py-16">
+      <SEO
+        title="Terms of Service — Booking & Trip Conditions | Travroidd"
+        description="Travroidd terms of service, tour booking conditions, payment schedules, and cancellation policies for all India travel packages."
+        canonical="https://www.travroidd.in/terms"
+      />
       <div className="mb-10 text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold text-[#0B5ED7] mb-3">
           <FileText className="h-4 w-4" /> Travel Agreements & Terms

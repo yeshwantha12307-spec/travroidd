@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { type Destination, INITIAL_DESTINATIONS } from '../data/destinations';
 import { useAuth } from './AuthContext';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { extractErrorMessage, extractApiError, logDiagnostic } from '../lib/errorUtils';
 
 /**
  * Safely parse JSON responses from API endpoints.
@@ -74,7 +75,7 @@ interface BookingContextType {
 
 const BookingContext = createContext<BookingContextType | null>(null);
 
-const DESTINATIONS_KEY = 'travroidd_destinations_v5';
+const DESTINATIONS_KEY = 'travroidd_destinations_v6';
 const LIKES_KEY = 'travroidd_likes';
 const USER_LIKES_KEY = 'travroidd_user_likes';
 
@@ -84,18 +85,25 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Destinations data loaded with local image paths
+  // Destinations data loaded with local image paths and all 27 verified packages
   const [destinations, setDestinations] = useState<Destination[]>(() => {
     try {
       const stored = localStorage.getItem(DESTINATIONS_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          return INITIAL_DESTINATIONS.map((initial) => {
+          // Merge authoritative INITIAL_DESTINATIONS with any locally persisted customizations
+          const initialMap = new Map(INITIAL_DESTINATIONS.map((d) => [d.slug, d]));
+          const merged = INITIAL_DESTINATIONS.map((initial) => {
             const existing = parsed.find((p: Destination) => p.slug === initial.slug);
             return existing
               ? {
+                  ...initial,
                   ...existing,
+                  name: initial.name,
+                  title: initial.title,
+                  state: initial.state,
+                  region: initial.region,
                   image: initial.image,
                   galleryImages: initial.galleryImages,
                   price: initial.price,
@@ -103,9 +111,19 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
                   popularTagline: initial.popularTagline,
                   topDestinationTagline: initial.topDestinationTagline,
                   budgetTripTagline: initial.budgetTripTagline,
+                  highlights: initial.highlights,
+                  itinerary: initial.itinerary,
                 }
               : initial;
           });
+
+          // Also retain any custom destinations added via admin that aren't in INITIAL_DESTINATIONS
+          for (const item of parsed) {
+            if (!initialMap.has(item.slug)) {
+              merged.push(item);
+            }
+          }
+          return merged;
         }
       }
       return INITIAL_DESTINATIONS;
@@ -221,10 +239,25 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const addBooking = async (
     bookingData: Omit<Booking, 'id' | 'created_at' | 'status'>
   ): Promise<Booking> => {
-    // 1. Post to backend / serverless API
+    // 1. Retrieve current Supabase session to attach access token as Bearer Authorization header
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    };
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
+    } catch (sessionErr) {
+      console.warn('[BookingContext] Could not retrieve session access token:', sessionErr);
+    }
+
+    // 2. Post to backend / serverless API with Authorization header
     const res = await fetch('/api/bookings', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      headers,
       credentials: 'include',
       body: JSON.stringify(bookingData),
     });
@@ -241,13 +274,6 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       status: 'pending',
     };
 
-    // 2. Also sync to Supabase if client is configured
-    if (isSupabaseConfigured) {
-      try {
-        await supabase.from('bookings').insert([newBooking]);
-      } catch {}
-    }
-
     setBookings((prev) => [newBooking, ...prev]);
     return newBooking;
   };
@@ -256,48 +282,149 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     id: string,
     status: 'pending' | 'confirmed' | 'cancelled'
   ) => {
-    const res = await fetch(`/api/admin/bookings/${id}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ status }),
-    });
+    if (!id || typeof id !== 'string' || !id.trim()) {
+      throw new Error('Invalid or missing booking ID.');
+    }
+    const cleanId = id.trim();
 
-    if (!res.ok) {
-      const { data } = await parseSafeJson(res);
-      throw new Error(data?.error || 'Failed to update booking status.');
+    const allowedStatuses: Array<'pending' | 'confirmed' | 'cancelled'> = [
+      'pending',
+      'confirmed',
+      'cancelled',
+    ];
+    if (!allowedStatuses.includes(status)) {
+      throw new Error('Invalid booking status. Allowed values: pending, confirmed, cancelled.');
     }
 
+    let updateSucceeded = false;
+    let failureReason: string | null = null;
+
+    // 1. Primary persistence: update Supabase directly with authenticated admin session
     if (isSupabaseConfigured) {
       try {
-        await supabase.from('bookings').update({ status }).eq('id', id);
-      } catch {}
+        const { data, error: sbErr } = await supabase
+          .from('bookings')
+          .update({ status })
+          .eq('id', cleanId)
+          .select();
+
+        if (sbErr) {
+          logDiagnostic('updateBookingStatus:supabase_error', sbErr);
+          failureReason = extractErrorMessage(
+            sbErr,
+            status === 'confirmed'
+              ? 'Unable to approve booking. Please try again.'
+              : 'Unable to update booking status. Please try again.'
+          );
+        } else if (!data || data.length === 0) {
+          failureReason = 'Booking record not found or permission denied by security policy.';
+        } else {
+          updateSucceeded = true;
+        }
+      } catch (err: any) {
+        logDiagnostic('updateBookingStatus:exception', err);
+        failureReason = extractErrorMessage(
+          err,
+          status === 'confirmed'
+            ? 'Unable to approve booking. Please try again.'
+            : 'Unable to update booking status. Please try again.'
+        );
+      }
     }
 
+    // 2. Secondary fallback for local mock server environment without Supabase
+    if (!updateSucceeded && !isSupabaseConfigured) {
+      try {
+        const res = await fetch(`/api/admin/bookings/${cleanId}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ status }),
+        });
+
+        const { data, error: jsonErr } = await parseSafeJson(res);
+        if (res.ok) {
+          updateSucceeded = true;
+        } else {
+          failureReason = extractApiError(data, jsonErr || `Server returned error (${res.status})`);
+        }
+      } catch (networkErr: any) {
+        logDiagnostic('updateBookingStatus:network_error', networkErr);
+        failureReason = extractErrorMessage(networkErr, 'Network request failed.');
+      }
+    }
+
+    if (!updateSucceeded) {
+      throw new Error(
+        failureReason ||
+          (status === 'confirmed'
+            ? 'Unable to approve booking. Please try again.'
+            : 'Unable to update booking status. Please try again.')
+      );
+    }
+
+    // 3. UI state update happens strictly on confirmed database success
     setBookings((prev) =>
-      prev.map((b) => (b.id === id ? { ...b, status } : b))
+      prev.map((b) => (b.id === cleanId ? { ...b, status } : b))
     );
   };
 
   const deleteBooking = async (id: string) => {
-    const res = await fetch(`/api/admin/bookings/${id}`, {
-      method: 'DELETE',
-      headers: { Accept: 'application/json' },
-      credentials: 'include',
-    });
-
-    if (!res.ok) {
-      const { data } = await parseSafeJson(res);
-      throw new Error(data?.error || 'Failed to delete booking.');
+    if (!id || typeof id !== 'string' || !id.trim()) {
+      throw new Error('Invalid or missing booking ID.');
     }
+    const cleanId = id.trim();
+
+    let deleteSucceeded = false;
+    let failureReason: string | null = null;
 
     if (isSupabaseConfigured) {
       try {
-        await supabase.from('bookings').delete().eq('id', id);
-      } catch {}
+        const { data, error: sbErr } = await supabase
+          .from('bookings')
+          .delete()
+          .eq('id', cleanId)
+          .select();
+
+        if (sbErr) {
+          logDiagnostic('deleteBooking:supabase_error', sbErr);
+          failureReason = extractErrorMessage(sbErr, 'Unable to delete booking. Please try again.');
+        } else if (!data || data.length === 0) {
+          failureReason = 'Booking record not found or permission denied by security policy.';
+        } else {
+          deleteSucceeded = true;
+        }
+      } catch (err: any) {
+        logDiagnostic('deleteBooking:exception', err);
+        failureReason = extractErrorMessage(err, 'Unable to delete booking. Please try again.');
+      }
     }
 
-    setBookings((prev) => prev.filter((b) => b.id !== id));
+    if (!deleteSucceeded && !isSupabaseConfigured) {
+      try {
+        const res = await fetch(`/api/admin/bookings/${cleanId}`, {
+          method: 'DELETE',
+          headers: { Accept: 'application/json' },
+          credentials: 'include',
+        });
+
+        const { data, error: jsonErr } = await parseSafeJson(res);
+        if (res.ok) {
+          deleteSucceeded = true;
+        } else {
+          failureReason = extractApiError(data, jsonErr || 'Unable to delete booking. Please try again.');
+        }
+      } catch (networkErr: any) {
+        logDiagnostic('deleteBooking:network_error', networkErr);
+        failureReason = extractErrorMessage(networkErr, 'Network request failed.');
+      }
+    }
+
+    if (!deleteSucceeded) {
+      throw new Error(failureReason || 'Unable to delete booking. Please try again.');
+    }
+
+    setBookings((prev) => prev.filter((b) => b.id !== cleanId));
   };
 
   const addEnquiry = async (
@@ -395,21 +522,51 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const deleteEnquiry = async (id: string) => {
-    const res = await fetch(`/api/admin/enquiries/${id}`, {
-      method: 'DELETE',
-      headers: { Accept: 'application/json' },
-      credentials: 'include',
-    });
-
-    if (!res.ok) {
-      const { data } = await parseSafeJson(res);
-      throw new Error(data?.error || 'Failed to delete enquiry.');
-    }
+    let deleteSucceeded = false;
+    let failureReason: string | null = null;
 
     if (isSupabaseConfigured) {
       try {
-        await supabase.from('enquiries').delete().eq('id', id);
-      } catch {}
+        const { data, error: sbErr } = await supabase
+          .from('enquiries')
+          .delete()
+          .eq('id', id)
+          .select();
+
+        if (sbErr) {
+          console.error('[BookingContext] Supabase delete enquiry error:', sbErr);
+          failureReason = sbErr.message;
+        } else if (!data || data.length === 0) {
+          failureReason = 'Enquiry record not found or permission denied by security policy.';
+        } else {
+          deleteSucceeded = true;
+        }
+      } catch (err: any) {
+        failureReason = extractErrorMessage(err, 'Failed to delete enquiry from database.');
+      }
+    }
+
+    if (!deleteSucceeded && !isSupabaseConfigured) {
+      try {
+        const res = await fetch(`/api/admin/enquiries/${id}`, {
+          method: 'DELETE',
+          headers: { Accept: 'application/json' },
+          credentials: 'include',
+        });
+
+        const { data, error: jsonErr } = await parseSafeJson(res);
+        if (res.ok) {
+          deleteSucceeded = true;
+        } else {
+          failureReason = extractApiError(data, jsonErr || 'Failed to delete enquiry.');
+        }
+      } catch (networkErr: any) {
+        failureReason = networkErr?.message || 'Network request failed';
+      }
+    }
+
+    if (!deleteSucceeded) {
+      throw new Error(failureReason || 'Failed to delete enquiry.');
     }
 
     setEnquiries((prev) => prev.filter((e) => e.id !== id));
@@ -446,7 +603,29 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const getDestination = (slug: string) => {
-    return destinations.find((d) => d.slug === slug);
+    const direct = destinations.find((d) => d.slug === slug);
+    if (direct) return direct;
+
+    // Resilient fallback aliases for backward compatibility and alternate searches
+    if (slug === 'rajasthan' || slug === 'jaipur') {
+      return destinations.find((d) => d.slug === 'hawa-mahal');
+    }
+    if (slug === 'ladakh') {
+      return destinations.find((d) => d.slug === 'kashmir');
+    }
+    if (slug === 'amritsar') {
+      return destinations.find((d) => d.slug === 'golden-temple');
+    }
+    if (slug === 'mysuru' || slug === 'mysore') {
+      return destinations.find((d) => d.slug === 'mysuru-palace');
+    }
+    if (slug === 'agra') {
+      return destinations.find((d) => d.slug === 'taj-mahal');
+    }
+    if (slug === 'party' || slug === 'night-out') {
+      return destinations.find((d) => d.slug === 'party-package');
+    }
+    return undefined;
   };
 
   return (

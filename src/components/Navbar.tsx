@@ -21,7 +21,7 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
   const [destDropdownOpen, setDestDropdownOpen] = useState(false);
   const [budgetDropdownOpen, setBudgetDropdownOpen] = useState(false);
   const location = useLocation();
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, loading, signOut } = useAuth();
 
 
   return (
@@ -200,7 +200,7 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
                 <User className="h-3.5 w-3.5 text-[#0B5ED7] shrink-0" />
                 <span className="max-w-[100px] xl:max-w-[130px] truncate">{user.name || 'My Bookings'}</span>
               </Link>
-              {isAdmin && (
+              {!loading && isAdmin && (
                 <Link
                   to="/admin"
                   className="flex items-center gap-1 h-8 rounded-full bg-blue-50 px-2.5 text-xs font-bold text-[#0B5ED7] border border-blue-200 hover:bg-blue-100 shrink-0"
@@ -379,7 +379,7 @@ export const Navbar: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanM
                   >
                     <User className="h-4 w-4 text-[#0B5ED7] shrink-0" /> My Bookings ({user.name || user.email})
                   </Link>
-                  {isAdmin && (
+                  {!loading && isAdmin && (
                     <Link
                       to="/admin"
                       onClick={() => setMobileMenuOpen(false)}

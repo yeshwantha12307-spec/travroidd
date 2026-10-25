@@ -1,10 +1,16 @@
 import React from 'react';
 import { ShieldCheck, Lock, EyeOff, Server } from 'lucide-react';
 import { EMAIL_ADDRESS, LOCATION_ADDRESS, WHATSAPP_PHONE } from '../data/destinations';
+import { SEO } from '../components/SEO';
 
 export const PrivacyPolicyPage: React.FC = () => {
   return (
     <section className="mx-auto max-w-4xl px-4 py-16">
+      <SEO
+        title="Privacy Policy — Customer Data Protection | Travroidd"
+        description="Read Travroidd's Privacy Policy. Learn how we safeguard your personal data, travel bookings, and communications."
+        canonical="https://www.travroidd.in/privacy"
+      />
       <div className="mb-10 text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold text-[#0B5ED7] mb-3">
           <ShieldCheck className="h-4 w-4" /> Customer Data Protection
