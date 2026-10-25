@@ -22,31 +22,31 @@ export const Footer: React.FC = () => {
               Pack your bags. Make your memory.
             </p>
 
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 pt-2">
-              {/* WhatsApp button */}
+            <div className="flex items-center gap-3 pt-2">
+              {/* WhatsApp icon-only link */}
               <a
                 href={getWhatsAppUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Chat on WhatsApp"
                 title="Chat with Travroidd on WhatsApp"
-                className="inline-flex h-[44px] items-center gap-2 rounded-full bg-[#25D366] px-4 text-xs font-bold text-white shadow-md transition-all duration-200 hover:bg-[#20ba5a] hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2 focus:ring-offset-[#0B2E63]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#25D366] text-white shadow-md transition-all duration-200 hover:bg-[#20ba5a] hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2 focus:ring-offset-[#0B2E63]"
               >
-                <MessageCircle className="h-[18px] w-[18px] shrink-0" />
-                <span>WhatsApp</span>
+                <MessageCircle className="h-5 w-5 shrink-0" aria-hidden="true" />
+                <span className="sr-only">WhatsApp</span>
               </a>
 
-              {/* Instagram button */}
+              {/* Instagram icon-only link */}
               <a
                 href="https://www.instagram.com/travroidd/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Follow Travroidd on Instagram"
                 title="Follow Travroidd on Instagram"
-                className="inline-flex h-[44px] items-center gap-2 rounded-full bg-gradient-to-r from-[#f09433] via-[#dc2743] to-[#bc1888] px-4 text-xs font-bold text-white shadow-md transition-all duration-200 hover:opacity-95 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#dc2743] focus:ring-offset-2 focus:ring-offset-[#0B2E63]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shadow-md transition-all duration-200 hover:opacity-90 hover:scale-110 active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#dc2743] focus:ring-offset-2 focus:ring-offset-[#0B2E63]"
               >
-                <InstagramIcon className="h-[18px] w-[18px] text-white shrink-0" />
-                <span>Instagram</span>
+                <InstagramIcon className="h-5 w-5 text-white shrink-0" aria-hidden="true" />
+                <span className="sr-only">Instagram</span>
               </a>
             </div>
           </div>

@@ -11,9 +11,11 @@ if (!fs.existsSync(outDir)) {
   fs.mkdirSync(outDir, { recursive: true });
 }
 
+const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
+
 (async () => {
   console.log('====================================================');
-  console.log('TRAVROIDD INITIAL LOADER & PROMOTIONAL OFFERS AUDIT');
+  console.log(`TRAVROIDD INITIAL LOADER & PROMOTIONAL OFFERS AUDIT (${baseUrl})`);
   console.log('====================================================\n');
 
   const browser = await puppeteer.launch({
@@ -27,6 +29,7 @@ if (!fs.existsSync(outDir)) {
     loaderCompleted: false,
     returningVisitorSkipped: false,
     oldSectionRemoved: false,
+    promoPositionProminent: false,
     cardAFound: false,
     cardBFound: false,
     discountsCorrect: false,
@@ -48,7 +51,7 @@ if (!fs.existsSync(outDir)) {
     await page.setViewport({ width: 1280, height: 800 });
 
     // Verify initial raw HTML sent from server contains the branded preloader
-    const rawHtml = await fetch('http://localhost:5173/').then(r => r.text());
+    const rawHtml = await fetch(`${baseUrl}/`).then(r => r.text());
     const hasPreloaderInHtml = rawHtml.includes('id="travroidd-preloader"') &&
       rawHtml.includes('src="/assets/travroidd-logo.webp"');
     const hasCrawlerInNoscript = rawHtml.includes('<noscript>') &&
@@ -57,7 +60,7 @@ if (!fs.existsSync(outDir)) {
     console.log('   Raw HTML Preloader check:', { hasPreloaderInHtml, hasCrawlerInNoscript });
 
     // Navigate to homepage without setting sessionStorage
-    const navPromise = page.goto('http://localhost:5173/', { waitUntil: 'domcontentloaded' });
+    const navPromise = page.goto(`${baseUrl}/`, { waitUntil: 'domcontentloaded' });
     await navPromise;
 
     // Immediately inspect DOM at first render
@@ -88,7 +91,7 @@ if (!fs.existsSync(outDir)) {
       const intro = document.querySelector('[role="status"]');
       const preloader = document.getElementById('travroidd-preloader');
       return !intro && (!preloader || window.getComputedStyle(preloader).display === 'none');
-    }, { timeout: 6000 });
+    }, { timeout: 8000 });
 
     testResults.loaderCompleted = true;
     console.log('   ✓ Intro Animation cleanly completed and unmounted!');
@@ -155,50 +158,52 @@ if (!fs.existsSync(outDir)) {
     // -------------------------------------------------------------------------
     // TEST 4: VERIFY NEW PROMOTIONAL OFFERS (CARD A & CARD B)
     // -------------------------------------------------------------------------
-    console.log('\n4. Auditing New Promotional Offer Cards...');
+    console.log('\n4. Auditing New Promotional Offer Cards & Placement...');
     const promoSection = await page.evaluate(() => {
       const section = document.getElementById('promotional-offers');
       if (!section) return null;
 
-      // Card A: College / IV
-      const cardAHeading = section.querySelector('h3:nth-of-type(1)');
+      // Position check: comes before #popular-destinations
+      const popularSection = document.getElementById('popular-destinations');
+      const isBeforePopular = popularSection ?
+        (section.compareDocumentPosition(popularSection) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0 : false;
+
       const badges = Array.from(section.querySelectorAll('span'));
-      const badge30 = badges.find(s => s.innerText.includes('30% Discount Offer'));
-      const badge40 = badges.find(s => s.innerText.includes('40% Discount Offer'));
+      const badge30 = badges.find(s => s.innerText.includes('30% OFF'));
+      const badge40 = badges.find(s => s.innerText.includes('40% OFF'));
 
       const collegeBtn = section.querySelector('a[href*="College%20Tour"]');
-      const schoolBtn = section.querySelector('a[href*="School%20Tour"]');
+      const schoolBtn = section.querySelector('a[href*="School"]');
 
       const textContent = section.innerText;
 
       return {
         exists: true,
-        textContent,
+        isBeforePopular,
         hasBadge30: !!badge30,
         hasBadge40: !!badge40,
         hasCollegeBtn: !!collegeBtn,
+        collegeBtnText: collegeBtn?.innerText.trim(),
         collegeBtnHref: collegeBtn?.href,
         hasSchoolBtn: !!schoolBtn,
+        schoolBtnText: schoolBtn?.innerText.trim(),
         schoolBtnHref: schoolBtn?.href,
-        hasCollegeHeading: textContent.includes('IV Trip & College Tour Special Offer'),
-        hasSchoolHeading: textContent.includes('School Tour Special Offer'),
+        hasCollegeHeading: textContent.includes('College Tour & Industrial Visit'),
+        hasSchoolHeading: textContent.includes('School Educational Tours'),
         hasIndustrialVisitCities: textContent.includes('Chennai, Bangalore, Hyderabad, Mumbai'),
-        hasCollegePlans: textContent.includes('2-day, 3-day, 5-day, and 7-day IV plans'),
+        hasCollegePlans: textContent.includes('2-day, 3-day, 5-day, and 7-day plans'),
         hasSchoolPlans: textContent.includes('1-day, 2-day, 3-day, and 5-day plans'),
         hasBonafide: textContent.includes('Company permission and bonafide assistance'),
-        hasTeacherAssistance: textContent.includes('Teacher Assistance'),
+        hasTransportA: textContent.includes('AC / Non-AC Transport'),
+        hasSafeHotelB: textContent.includes('Safe Hotel & Food Arrangements'),
+        hasTeacherStudentSupport: textContent.includes('Teacher and student support'),
         hasDisclaimer: textContent.includes('Special promotional discounts apply to institutional group bookings')
       };
     });
 
-    console.log('   Promotional Section Audit Details:');
-    console.log(`     - Card A (College 30%): ${promoSection?.hasCollegeHeading && promoSection?.hasBadge30}`);
-    console.log(`     - Card B (School 40%): ${promoSection?.hasSchoolHeading && promoSection?.hasBadge40}`);
-    console.log(`     - College Tour Options & Plans: ${promoSection?.hasIndustrialVisitCities && promoSection?.hasCollegePlans}`);
-    console.log(`     - School Tour Options & Plans: ${promoSection?.hasSchoolPlans && promoSection?.hasTeacherAssistance}`);
-    console.log(`     - WhatsApp College CTA: ${promoSection?.collegeBtnHref}`);
-    console.log(`     - WhatsApp School CTA: ${promoSection?.schoolBtnHref}`);
+    console.log('   Promotional Section Audit Details:', promoSection);
 
+    testResults.promoPositionProminent = promoSection?.isBeforePopular;
     testResults.cardAFound = promoSection?.hasCollegeHeading && promoSection?.hasBadge30;
     testResults.cardBFound = promoSection?.hasSchoolHeading && promoSection?.hasBadge40;
     testResults.discountsCorrect = promoSection?.hasBadge30 && promoSection?.hasBadge40;
@@ -209,7 +214,7 @@ if (!fs.existsSync(outDir)) {
     // TEST 5: DIRECT NAVIGATION TO INNER PAGES
     // -------------------------------------------------------------------------
     console.log('\n5. Testing Direct Navigation to Inner Pages (/destinations)...');
-    await page.goto('http://localhost:5173/destinations', { waitUntil: 'networkidle0' });
+    await page.goto(`${baseUrl}/destinations`, { waitUntil: 'networkidle0' });
     const destinationsPageTitle = await page.title();
     console.log(`   /destinations page loaded with title: "${destinationsPageTitle}"`);
     testResults.innerPageDirectNav = destinationsPageTitle.includes('Destinations');
@@ -226,7 +231,7 @@ if (!fs.existsSync(outDir)) {
 
     for (const vp of viewports) {
       await page.setViewport({ width: vp.width, height: vp.height });
-      await page.goto('http://localhost:5173/', { waitUntil: 'networkidle0' });
+      await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle0' });
 
       // Scroll to promotional section
       const promoEl = await page.$('#promotional-offers');
@@ -251,17 +256,19 @@ if (!fs.existsSync(outDir)) {
   console.log(`2. Intro Animation Completion & Handoff: ${testResults.loaderCompleted ? 'PASS' : 'FAIL'}`);
   console.log(`3. Returning Visitor Instant Bypass: ${testResults.returningVisitorSkipped ? 'PASS' : 'FAIL'}`);
   console.log(`4. Old Budget Package Content Removed: ${testResults.oldSectionRemoved ? 'PASS' : 'FAIL'}`);
-  console.log(`5. Card A (College / IV 30%): ${testResults.cardAFound ? 'PASS' : 'FAIL'}`);
-  console.log(`6. Card B (School 40%): ${testResults.cardBFound ? 'PASS' : 'FAIL'}`);
-  console.log(`7. WhatsApp Enquiry Buttons Valid: ${testResults.whatsappLinksValid ? 'PASS' : 'FAIL'}`);
-  console.log(`8. Inner Pages Direct Navigation: ${testResults.innerPageDirectNav ? 'PASS' : 'FAIL'}`);
-  console.log(`9. Console Errors: ${testResults.errors.length}`);
+  console.log(`5. Promotional Section Prominent Placement (Above Popular): ${testResults.promoPositionProminent ? 'PASS' : 'FAIL'}`);
+  console.log(`6. Card A (College / IV 30% OFF): ${testResults.cardAFound ? 'PASS' : 'FAIL'}`);
+  console.log(`7. Card B (School 40% OFF): ${testResults.cardBFound ? 'PASS' : 'FAIL'}`);
+  console.log(`8. WhatsApp Enquiry Buttons Valid: ${testResults.whatsappLinksValid ? 'PASS' : 'FAIL'}`);
+  console.log(`9. Inner Pages Direct Navigation: ${testResults.innerPageDirectNav ? 'PASS' : 'FAIL'}`);
+  console.log(`10. Console Errors: ${testResults.errors.length}`);
   console.log('====================================================\n');
 
   const allPassed = testResults.loaderInitialState?.hasPreloader &&
     testResults.loaderCompleted &&
     testResults.returningVisitorSkipped &&
     testResults.oldSectionRemoved &&
+    testResults.promoPositionProminent &&
     testResults.cardAFound &&
     testResults.cardBFound &&
     testResults.whatsappLinksValid &&

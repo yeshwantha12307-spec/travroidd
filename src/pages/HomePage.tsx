@@ -347,6 +347,11 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
       </section>
 
       {/* ========================================================================= */}
+      {/* PROMOTIONAL OFFERS (COLLEGE / IV & SCHOOL SPECIAL OFFERS) */}
+      {/* ========================================================================= */}
+      <PromotionalOffers onOpenPlanModal={onOpenPlanModal} />
+
+      {/* ========================================================================= */}
       {/* 1. POPULAR DESTINATIONS SECTION */}
       {/* ========================================================================= */}
       <section id="popular-destinations" className="mx-auto w-full max-w-7xl px-4 py-8 sm:py-10 sm:px-6">
@@ -659,12 +664,7 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
       </section>
 
       {/* ========================================================================= */}
-      {/* 4. PROMOTIONAL OFFERS (COLLEGE / IV & SCHOOL SPECIAL OFFERS) */}
-      {/* ========================================================================= */}
-      <PromotionalOffers onOpenPlanModal={onOpenPlanModal} />
-
-      {/* ========================================================================= */}
-      {/* 5. EXPLORE INDIA WITH TRAVROIDD BANNER */}
+      {/* 4. EXPLORE INDIA WITH TRAVROIDD BANNER */}
       {/* ========================================================================= */}
       <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:py-16 sm:px-6">
         <div className="relative flex flex-col items-center justify-between gap-6 overflow-hidden rounded-3xl bg-gradient-to-r from-blue-50 via-sky-50 to-blue-50 p-6 sm:p-8 md:flex-row md:px-12 md:py-10 border border-blue-100 shadow-sm text-center md:text-left">

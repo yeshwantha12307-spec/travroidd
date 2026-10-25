@@ -73,6 +73,17 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({
     };
   }, [forceShow, isVisible, onComplete]);
 
+  // Lock scroll and keep page strictly at top while intro is showing to eliminate any layout flash
+  useEffect(() => {
+    if (!isVisible) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    window.scrollTo(0, 0);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isVisible]);
+
   const handleSkip = () => {
     try {
       sessionStorage.setItem('travroidd_intro_seen', 'true');
@@ -90,7 +101,7 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({
     <div
       role="status"
       aria-live="polite"
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white transition-opacity duration-700 ease-out ${
+      className={`fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-white transition-opacity duration-700 ease-out ${
         isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >

@@ -25,10 +25,10 @@ interface PromotionalOffersProps {
 
 export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlanModal }) => {
   const collegeWhatsAppMsg =
-    "Hi Travroidd! I would like to enquire about the IV Trip & College Tour Special Offer (30% Discount). Please share package details, itineraries, and group quotes.";
+    "Hi Travroidd! I would like to enquire about the College Tour & Industrial Visit Special Offer (30% OFF). Please share package details, itineraries, and group quotes.";
 
   const schoolWhatsAppMsg =
-    "Hi Travroidd! I would like to enquire about the School Tour Special Offer (40% Discount). Please share package details, itineraries, and group quotes.";
+    "Hi Travroidd! I would like to enquire about the School Educational Tours Special Offer (40% OFF). Please share package details, itineraries, and group quotes.";
 
   return (
     <section
@@ -40,10 +40,10 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
       <div className="mb-10 text-center max-w-3xl mx-auto">
         <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-1.5 text-xs font-bold text-[#0B5ED7] border border-blue-100 mb-3 shadow-xs">
           <Sparkles className="h-3.5 w-3.5" />
-          <span>Exclusive Group & Institutional Offers</span>
+          <span>Exclusive Group &amp; Institutional Offers</span>
         </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0A2A66] tracking-tight">
-          Special Educational & Institutional Tour Packages
+          Special Educational &amp; Institutional Tour Packages
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
           Tailored group travel solutions across India with complete safety, verified accommodation, comfortable transport, and full coordinator support.
@@ -53,7 +53,7 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
       {/* Two Promotional Cards Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
         {/* ========================================================================= */}
-        {/* CARD A — IV Trip & College Tour Special Offer (30% Discount) */}
+        {/* CARD A — College Tour & Industrial Visit (30% OFF) */}
         {/* ========================================================================= */}
         <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-[#0B2E63] text-white shadow-xl transition-all duration-300 hover:shadow-2xl border border-blue-900/40">
           {/* Subtle Ambient Background Image & Gradient */}
@@ -74,29 +74,29 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-400/20 px-3.5 py-1 text-xs font-bold text-sky-200 border border-sky-300/30 backdrop-blur-sm">
                 <GraduationCap className="h-4 w-4 text-sky-300" />
-                College Tour &amp; IV Trip Packages
+                College Tour &amp; IV Packages
               </span>
 
-              {/* 30% Discount Badge */}
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-3.5 py-1 text-xs font-black tracking-wide text-slate-950 shadow-md animate-pulse">
-                30% Discount Offer
+              {/* 30% OFF Discount Badge */}
+              <span className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-3.5 py-1 text-xs font-black tracking-wider text-slate-950 shadow-md animate-pulse">
+                30% OFF
               </span>
             </div>
 
             {/* Main Heading & Tagline */}
             <div className="mt-5">
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
-                IV Trip &amp; College Tour Special Offer
+                College Tour &amp; Industrial Visit
               </h3>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-sky-300 font-semibold text-xs sm:text-sm">
-                <span className="flex items-center gap-1 text-amber-300">
+                <span className="flex items-center gap-1 text-amber-300 font-bold">
                   <MapPin className="h-3.5 w-3.5" /> All India • Any Place
                 </span>
                 <span>•</span>
-                <span className="italic text-blue-100">Industrial Visit, Friends, Fun &amp; Memories</span>
+                <span className="italic text-blue-100">Industrial Visits, Friends, Fun &amp; Memories</span>
               </div>
               <p className="mt-3 text-xs sm:text-sm text-slate-200 leading-relaxed">
-                Special discounted IV trips and college tours across India — industrial visits, fun, and unforgettable memories.
+                Special 30% discount offer on IV and college tours across India — industrial visits, friends, fun, and lifelong memories.
               </p>
             </div>
 
@@ -108,7 +108,7 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
               <ul className="space-y-2 text-xs sm:text-sm text-slate-100">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>Industrial Visit:</strong> Chennai, Bangalore, Hyderabad, Mumbai</span>
+                  <span><strong>Industrial Visits:</strong> Chennai, Bangalore, Hyderabad, Mumbai tech &amp; manufacturing</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
@@ -120,7 +120,7 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>Hill Stations &amp; Adventure Tour:</strong> Ooty, Kodaikanal, Munnar &amp; Coorg</span>
+                  <span><strong>Hill Stations &amp; Adventure Tours:</strong> Ooty, Kodaikanal, Munnar &amp; Coorg</span>
                 </li>
               </ul>
 
@@ -128,23 +128,19 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
               <div className="mt-3.5 pt-3 border-t border-white/10 flex items-center gap-2 text-xs text-sky-200">
                 <Clock className="h-3.5 w-3.5 text-amber-300" />
                 <span className="font-semibold text-white">Available Plans:</span>
-                <span>2-day, 3-day, 5-day, and 7-day IV plans</span>
+                <span>2-day, 3-day, 5-day, and 7-day plans</span>
               </div>
             </div>
 
             {/* Key Benefits */}
             <div className="mt-6">
               <h4 className="text-xs font-bold uppercase tracking-wider text-sky-200 flex items-center gap-1.5 mb-3">
-                <ShieldCheck className="h-4 w-4 text-sky-300" /> Included Benefits &amp; Support
+                <ShieldCheck className="h-4 w-4 text-sky-300" /> Safe &amp; Secure Arrangements
               </h4>
               <div className="grid grid-cols-2 gap-2.5 text-xs text-slate-200">
                 <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
                   <ShieldCheck className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Safe &amp; Secure</span>
-                </div>
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Wallet className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Budget Friendly</span>
+                  <span>Safe &amp; Secure Arrangements</span>
                 </div>
                 <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
                   <Utensils className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
@@ -152,7 +148,11 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
                 </div>
                 <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
                   <Bus className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Transport Included</span>
+                  <span>AC / Non-AC Transport</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
+                  <Wallet className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                  <span>30% Discount Savings</span>
                 </div>
                 <div className="col-span-2 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
                   <FileCheck className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
@@ -164,7 +164,7 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
                 </div>
                 <div className="col-span-2 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
                   <Compass className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Full guide and trip support</span>
+                  <span>Guide and trip support</span>
                 </div>
               </div>
             </div>
@@ -176,12 +176,12 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
               href={getWhatsAppUrl(collegeWhatsAppMsg)}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Enquire for College Tours on WhatsApp"
-              title="Enquire for College Tours on WhatsApp"
+              aria-label="Enquire About College Tours on WhatsApp"
+              title="Enquire About College Tours on WhatsApp"
               className="w-full sm:flex-1 inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-[#25D366] px-6 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:bg-[#20ba5a] hover:scale-[1.02] active:scale-95 cursor-pointer"
             >
               <MessageCircle className="h-4 w-4" />
-              <span>Enquire for College Tours</span>
+              <span>Enquire About College Tours</span>
             </a>
 
             {onOpenPlanModal && (
@@ -198,14 +198,14 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
         </div>
 
         {/* ========================================================================= */}
-        {/* CARD B — School Tour Special Offer (40% Discount) */}
+        {/* CARD B — School Educational Tours (40% OFF) */}
         {/* ========================================================================= */}
         <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-[#063B6B] text-white shadow-xl transition-all duration-300 hover:shadow-2xl border border-sky-900/40">
           {/* Subtle Ambient Background Image & Gradient */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
             <img
               src="/assets/destinations/TajMahal/taj_mahal.webp"
-              alt="School Tour Background"
+              alt="School Educational Tour Background"
               className="h-full w-full object-cover opacity-15 transition-transform duration-700 group-hover:scale-105"
               loading="lazy"
             />
@@ -219,29 +219,29 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-400/20 px-3.5 py-1 text-xs font-bold text-sky-200 border border-sky-300/30 backdrop-blur-sm">
                 <School className="h-4 w-4 text-sky-300" />
-                School Tour Packages
+                School Educational Tours
               </span>
 
-              {/* 40% Discount Badge */}
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400 px-3.5 py-1 text-xs font-black tracking-wide text-slate-950 shadow-md animate-pulse">
-                40% Discount Offer
+              {/* 40% OFF Discount Badge */}
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400 px-3.5 py-1 text-xs font-black tracking-wider text-slate-950 shadow-md animate-pulse">
+                40% OFF
               </span>
             </div>
 
             {/* Main Heading & Tagline */}
             <div className="mt-5">
               <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
-                School Tour Special Offer
+                School Educational Tours
               </h3>
               <div className="mt-2 flex flex-wrap items-center gap-2 text-sky-300 font-semibold text-xs sm:text-sm">
-                <span className="flex items-center gap-1 text-amber-300">
+                <span className="flex items-center gap-1 text-amber-300 font-bold">
                   <MapPin className="h-3.5 w-3.5" /> All India • Any Place
                 </span>
                 <span>•</span>
-                <span className="italic text-blue-100">Education, Fun &amp; Memories</span>
+                <span className="italic text-blue-100">Educational Tours, Fun &amp; Memories</span>
               </div>
               <p className="mt-3 text-xs sm:text-sm text-slate-200 leading-relaxed">
-                Tailored educational and heritage school excursions across India with complete safety, dedicated guides, and full student supervision.
+                40% discount offer on all-India school educational tours — fun, learning, and lifelong memories.
               </p>
             </div>
 
@@ -253,19 +253,19 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
               <ul className="space-y-2 text-xs sm:text-sm text-slate-100">
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>North India Educational Tour:</strong> Delhi Heritage, Taj Mahal &amp; Science Centers</span>
+                  <span><strong>North India Educational Tours:</strong> Delhi Heritage, Taj Mahal &amp; Science Centers</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>South India Heritage Tour:</strong> Mysuru, Hampi, Thanjavur &amp; Madurai</span>
+                  <span><strong>South India Heritage Tours:</strong> Mysuru, Hampi, Thanjavur &amp; Madurai</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>Hill Stations &amp; Nature Tour:</strong> Botanical Reserves, Ooty, Munnar &amp; Coorg</span>
+                  <span><strong>Hill Stations &amp; Nature Tours:</strong> Botanical Reserves, Ooty, Munnar &amp; Coorg</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>Custom School Tour:</strong> Anywhere in India tailored to syllabus &amp; school calendar</span>
+                  <span><strong>Custom School Tours:</strong> Anywhere in India tailored to syllabus &amp; school calendar</span>
                 </li>
               </ul>
 
@@ -280,40 +280,32 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
             {/* Key Benefits */}
             <div className="mt-6">
               <h4 className="text-xs font-bold uppercase tracking-wider text-sky-200 flex items-center gap-1.5 mb-3">
-                <ShieldCheck className="h-4 w-4 text-sky-300" /> Included Benefits &amp; Support
+                <ShieldCheck className="h-4 w-4 text-sky-300" /> Safe Hotel &amp; Food Arrangements
               </h4>
               <div className="grid grid-cols-2 gap-2.5 text-xs text-slate-200">
                 <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
                   <ShieldCheck className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Safe &amp; Secure</span>
+                  <span>Safe Hotel &amp; Food Arrangements</span>
                 </div>
                 <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Wallet className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Budget Friendly</span>
+                  <Bus className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                  <span>AC / Non-AC Transport</span>
                 </div>
                 <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
                   <GraduationCap className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
                   <span>Educational Tours</span>
                 </div>
                 <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Utensils className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Food &amp; Stay</span>
-                </div>
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Bus className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Transport Included</span>
-                </div>
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Users className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Teacher Assistance</span>
+                  <Wallet className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                  <span>40% Discount Savings</span>
                 </div>
                 <div className="col-span-2 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
                   <Compass className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Educational guide and trip assistance</span>
+                  <span>Educational guidance and trip assistance</span>
                 </div>
                 <div className="col-span-2 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Full teacher and student support</span>
+                  <Users className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                  <span>Teacher and student support</span>
                 </div>
               </div>
             </div>
@@ -325,12 +317,12 @@ export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlan
               href={getWhatsAppUrl(schoolWhatsAppMsg)}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Enquire for School Tours on WhatsApp"
-              title="Enquire for School Tours on WhatsApp"
+              aria-label="Enquire About School Tours on WhatsApp"
+              title="Enquire About School Tours on WhatsApp"
               className="w-full sm:flex-1 inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-[#25D366] px-6 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:bg-[#20ba5a] hover:scale-[1.02] active:scale-95 cursor-pointer"
             >
               <MessageCircle className="h-4 w-4" />
-              <span>Enquire for School Tours</span>
+              <span>Enquire About School Tours</span>
             </a>
 
             {onOpenPlanModal && (

@@ -11,9 +11,11 @@ if (!fs.existsSync(outDir)) {
   fs.mkdirSync(outDir, { recursive: true });
 }
 
+const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
+
 (async () => {
   console.log('====================================================');
-  console.log('TRAVROIDD FOOTER & FLOATING WHATSAPP AUDIT');
+  console.log(`TRAVROIDD FOOTER & FLOATING WHATSAPP AUDIT (${baseUrl})`);
   console.log('====================================================\n');
 
   const browser = await puppeteer.launch({
@@ -39,7 +41,7 @@ if (!fs.existsSync(outDir)) {
     for (const vp of viewports) {
       console.log(`\n--- Testing ${vp.name} (${vp.width}x${vp.height}) ---`);
       await page.setViewport({ width: vp.width, height: vp.height, isMobile: vp.isMobile });
-      await page.goto('http://localhost:5173/', { waitUntil: 'networkidle0' });
+      await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle0' });
 
       // Scroll to bottom so footer is in view
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
@@ -89,8 +91,6 @@ if (!fs.existsSync(outDir)) {
 
         const waRect = waBtn.getBoundingClientRect();
         const instaRect = instaBtn.getBoundingClientRect();
-        const waStyle = window.getComputedStyle(waBtn);
-        const instaStyle = window.getComputedStyle(instaBtn);
 
         const waSvg = waBtn.querySelector('svg');
         const instaSvg = instaBtn.querySelector('svg');
@@ -101,21 +101,17 @@ if (!fs.existsSync(outDir)) {
         return {
           wa: {
             href: waBtn.href,
-            text: waBtn.innerText.trim(),
+            ariaLabel: waBtn.getAttribute('aria-label'),
             width: Math.round(waRect.width),
             height: Math.round(waRect.height),
-            paddingLeft: parseFloat(waStyle.paddingLeft),
-            paddingRight: parseFloat(waStyle.paddingRight),
             svgWidth: waSvgRect ? Math.round(waSvgRect.width) : 0,
             svgHeight: waSvgRect ? Math.round(waSvgRect.height) : 0
           },
           insta: {
             href: instaBtn.href,
-            text: instaBtn.innerText.trim(),
+            ariaLabel: instaBtn.getAttribute('aria-label'),
             width: Math.round(instaRect.width),
             height: Math.round(instaRect.height),
-            paddingLeft: parseFloat(instaStyle.paddingLeft),
-            paddingRight: parseFloat(instaStyle.paddingRight),
             svgWidth: instaSvgRect ? Math.round(instaSvgRect.width) : 0,
             svgHeight: instaSvgRect ? Math.round(instaSvgRect.height) : 0
           }
@@ -139,12 +135,6 @@ if (!fs.existsSync(outDir)) {
           path: path.join(outDir, `floating_${vp.name.toLowerCase()}.png`)
         });
       }
-
-      // Viewport screenshot of footer with floating button visible
-      await page.screenshot({
-        path: path.join(outDir, `viewport_${vp.name.toLowerCase()}.png`),
-        fullPage: false
-      });
     }
 
     console.log('\nAudit complete! Screenshots saved to public/audit_screenshots/');
