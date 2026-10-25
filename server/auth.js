@@ -125,7 +125,10 @@ export function requireAdmin(req, res, next) {
     });
   }
 
-  if (req.user.role !== 'admin') {
+  const designatedAdminEmail = (process.env.ADMIN_EMAIL || 'admin@travroidd.com').trim().toLowerCase();
+  const userEmail = (req.user.email || '').trim().toLowerCase();
+
+  if (req.user.role !== 'admin' || userEmail !== designatedAdminEmail) {
     return res.status(403).json({
       error: 'Access denied. You do not have administrative privileges.',
       code: 'FORBIDDEN',

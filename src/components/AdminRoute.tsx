@@ -20,8 +20,8 @@ export const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  // Logged in customer without admin privileges -> redirect to safe public page
-  if (!isAdmin) {
+  // Logged in customer without explicit administrator identity -> redirect to safe public page
+  if (!isAdmin || user.email?.toLowerCase().trim() !== 'admin@travroidd.com') {
     return <Navigate to="/" replace />;
   }
 

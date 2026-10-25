@@ -18,15 +18,18 @@ CREATE TABLE IF NOT EXISTS public.profiles (
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 
 -- Helper function to check if current user is admin without recursion
+-- Strictly requires BOTH designated administrator email (admin@travroidd.com) AND server-controlled role
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN AS $$
 BEGIN
   RETURN (
-    (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin' OR
-    (auth.jwt() ->> 'email') = 'admin@travroidd.com' OR
-    EXISTS (
-      SELECT 1 FROM public.profiles
-      WHERE id = auth.uid() AND role = 'admin'
+    lower(auth.jwt() ->> 'email') = 'admin@travroidd.com' AND
+    (
+      (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin' OR
+      EXISTS (
+        SELECT 1 FROM public.profiles
+        WHERE id = auth.uid() AND role = 'admin' AND lower(email) = 'admin@travroidd.com'
+      )
     )
   );
 END;
@@ -39,8 +42,7 @@ CREATE POLICY "Public profiles are viewable by owner or admin"
   TO authenticated
   USING (
     auth.uid() = id OR
-    (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin' OR
-    (auth.jwt() ->> 'email') = 'admin@travroidd.com'
+    (lower(auth.jwt() ->> 'email') = 'admin@travroidd.com' AND (auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
   );
 
 DROP POLICY IF EXISTS "Users can insert own profile" ON public.profiles;
@@ -168,7 +170,7 @@ BEGIN
     new.email,
     COALESCE(new.raw_user_meta_data->>'name', split_part(new.email, '@', 1)),
     CASE
-      WHEN (new.raw_app_meta_data->>'role') = 'admin' OR new.email = 'admin@travroidd.com' THEN 'admin'
+      WHEN lower(new.email) = 'admin@travroidd.com' AND (new.raw_app_meta_data->>'role') = 'admin' THEN 'admin'
       ELSE 'customer'
     END
   )

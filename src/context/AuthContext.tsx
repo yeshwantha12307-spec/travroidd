@@ -38,18 +38,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
+  const AUTHORIZED_ADMIN_EMAIL = 'admin@travroidd.com';
+
+  const isExplicitAdmin = (email?: string | null, role?: string | null): boolean => {
+    if (!email || !role) return false;
+    return email.toLowerCase().trim() === AUTHORIZED_ADMIN_EMAIL && role === 'admin';
+  };
+
   // Helper to extract safe user object from Supabase or server
   // Server-controlled role: MUST be in app_metadata.role (signed by Supabase Auth)
-  // or verified from the server-side public.profiles table.
-  // Client-editable user_metadata and raw email strings are NEVER trusted for privilege assignment.
+  // or verified from the server-side public.profiles table AND strictly match AUTHORIZED_ADMIN_EMAIL.
+  // Client-editable user_metadata and non-admin email strings are NEVER granted admin privileges.
   const buildUserFromSupabase = (sbUser: any, profileRole?: string | null): User => {
     const meta = sbUser.user_metadata || {};
     const appMeta = sbUser.app_metadata || {};
-    const isAdmin = appMeta.role === 'admin' || profileRole === 'admin';
+    const cleanEmail = sbUser.email?.toLowerCase().trim() || '';
+
+    // Single authorized administrator constraint:
+    // Only the explicitly provisioned administrator identity (admin@travroidd.com)
+    // with server-verified role can ever be granted admin privileges.
+    const isDesignatedAdmin = cleanEmail === AUTHORIZED_ADMIN_EMAIL;
+    const hasAdminRole = appMeta.role === 'admin' || profileRole === 'admin';
+    const isAdmin = isDesignatedAdmin && hasAdminRole;
+
     return {
       id: sbUser.id,
-      email: sbUser.email?.toLowerCase() || '',
-      name: meta.name || sbUser.email?.split('@')[0] || 'User',
+      email: cleanEmail,
+      name: meta.name || cleanEmail.split('@')[0] || 'User',
       role: isAdmin ? 'admin' : 'customer',
       must_change_password: Boolean(meta.must_change_password),
     };
@@ -73,13 +88,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
               profileRole = profile.role;
             }
           } catch {
-            // Role lookup failure: strictly defaults to non-admin unless app_metadata guarantees it
+            // Role lookup failure: strictly defaults to non-admin
           }
         }
 
         const currentUser = buildUserFromSupabase(session.user, profileRole);
+        const isAuthorizedAdmin = isExplicitAdmin(currentUser.email, currentUser.role);
         setUser(currentUser);
-        setIsAdmin(currentUser.role === 'admin');
+        setIsAdmin(isAuthorizedAdmin);
         setLoading(false);
         return;
       }
@@ -94,8 +110,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (res && res.ok) {
           const data = await res.json().catch(() => null);
           if (data && data.user) {
-            setUser(data.user);
-            setIsAdmin(data.user.role === 'admin');
+            const isAuthorizedAdmin = isExplicitAdmin(data.user.email, data.user.role);
+            setUser({
+              ...data.user,
+              role: isAuthorizedAdmin ? 'admin' : 'customer',
+            });
+            setIsAdmin(isAuthorizedAdmin);
             setLoading(false);
             return;
           }
@@ -134,8 +154,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         const currentUser = buildUserFromSupabase(session.user, profileRole);
+        const isAuthorizedAdmin = isExplicitAdmin(currentUser.email, currentUser.role);
         setUser(currentUser);
-        setIsAdmin(currentUser.role === 'admin');
+        setIsAdmin(isAuthorizedAdmin);
       } else {
         // Only check local server if Supabase is unconfigured
         if (!isSupabaseConfigured) {
@@ -143,8 +164,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           if (res && res.ok) {
             const data = await res.json().catch(() => null);
             if (data?.user) {
-              setUser(data.user);
-              setIsAdmin(data.user.role === 'admin');
+              const isAuthorizedAdmin = isExplicitAdmin(data.user.email, data.user.role);
+              setUser({
+                ...data.user,
+                role: isAuthorizedAdmin ? 'admin' : 'customer',
+              });
+              setIsAdmin(isAuthorizedAdmin);
               return;
             }
           }
@@ -205,8 +230,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { error: new Error(data.error || 'Invalid email or password.') };
       }
 
-      setUser(data.user);
-      setIsAdmin(data.user.role === 'admin');
+      const isAuthorizedAdmin = isExplicitAdmin(data.user?.email, data.user?.role);
+      setUser({
+        ...data.user,
+        role: isAuthorizedAdmin ? 'admin' : 'customer',
+      });
+      setIsAdmin(isAuthorizedAdmin);
 
       return {
         error: null,
@@ -338,8 +367,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const data = await res.json();
       if (res.ok && data.user) {
-        setUser(data.user);
-        setIsAdmin(data.user.role === 'admin');
+        const isAuthorizedAdmin = isExplicitAdmin(data.user?.email, data.user?.role);
+        setUser({
+          ...data.user,
+          role: isAuthorizedAdmin ? 'admin' : 'customer',
+        });
+        setIsAdmin(isAuthorizedAdmin);
         return { error: null };
       } else if (hadError && !res.ok) {
         return { error: new Error(data.error || 'Failed to update password') };

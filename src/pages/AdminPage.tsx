@@ -56,7 +56,7 @@ export const AdminPage: React.FC = () => {
   });
 
   // Explicit server-verified authorization: redirect unauthorized customers to safe public page
-  if (!isAdmin) {
+  if (!isAdmin || user?.email?.toLowerCase().trim() !== 'admin@travroidd.com') {
     return <Navigate to="/" replace />;
   }
 
