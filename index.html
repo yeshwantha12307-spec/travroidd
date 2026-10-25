@@ -112,10 +112,56 @@
       }
     }
     </script>
+    <!-- Preloader & Reduced Motion Guard: Prevents flicker and skips loading for returning visitors -->
+    <script>
+      (function() {
+        try {
+          var hasSeen = sessionStorage.getItem('travroidd_intro_seen');
+          var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (hasSeen === 'true' || prefersReduced) {
+            document.documentElement.classList.add('skip-intro');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      html.skip-intro #travroidd-preloader {
+        display: none !important;
+      }
+    </style>
   </head>
   <body>
-    <!-- Initial Semantic HTML for Crawlers & Fast First-Pass Indexing (Replaced seamlessly by React SPA on mount) -->
+    <!-- Branded Initial Loading Screen (Visible immediately on first visit, seamlessly replaced when React mounts) -->
     <div id="root">
+      <div id="travroidd-preloader" style="position: fixed; inset: 0; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #ffffff; font-family: system-ui, -apple-system, sans-serif;">
+        <!-- Background radial accent glow -->
+        <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; overflow: hidden; background: linear-gradient(to bottom, #ffffff, rgba(240, 249, 255, 0.4), rgba(234, 243, 255, 0.6));">
+          <div style="height: 520px; width: 520px; border-radius: 9999px; background: radial-gradient(circle, rgba(11, 94, 215, 0.15) 0%, rgba(56, 189, 248, 0.1) 70%); filter: blur(48px);"></div>
+        </div>
+
+        <!-- Centerpiece: Official Travroidd Logo -->
+        <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; padding: 0 16px; text-align: center;">
+          <div style="filter: drop-shadow(0 20px 30px rgba(11, 94, 215, 0.20));">
+            <img
+              src="/assets/travroidd-logo.webp"
+              alt="Travroidd"
+              width="160"
+              height="160"
+              style="height: 140px; width: 140px; object-fit: contain;"
+              fetchpriority="high"
+            />
+          </div>
+          <div style="margin-top: 24px;">
+            <strong style="font-size: 32px; font-weight: 800; letter-spacing: -0.025em; color: #0A2A66; display: block;">Travroidd</strong>
+            <span style="display: block; margin-top: 4px; font-size: 12px; font-weight: 600; letter-spacing: 0.25em; color: #0B5ED7; text-transform: uppercase;">All India Travel Planner</span>
+            <span style="display: block; margin-top: 8px; font-size: 20px; color: #475569; font-style: italic;">Pack your bags. Make your memory.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Complete Semantic HTML Fallback for Search Crawlers & JavaScript-Disabled Environments -->
+    <noscript>
       <header style="padding: 16px 24px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
         <div style="display: flex; align-items: center; gap: 12px;">
           <img src="/assets/travroidd-logo.png" alt="Travroidd — All India Travel Partner Logo" width="48" height="48" style="height: 48px; width: 48px; object-fit: contain;" />
@@ -284,12 +330,6 @@
           <a href="/contact" style="color: #93c5fd; text-decoration: none; margin: 0 8px;">Contact Us</a>
         </p>
       </footer>
-    </div>
-
-    <noscript>
-      <div style="padding: 16px; background: #fffbeb; color: #92400e; text-align: center; font-family: sans-serif;">
-        JavaScript is currently disabled. Travroidd is an All India Travel Planner offering budget tour packages under ₹20,000. Please enable JavaScript or contact us via WhatsApp at <a href="https://wa.me/917339111948" style="color: #b45309; font-weight: bold;">+91 7339111948</a>.
-      </div>
     </noscript>
 
     <script type="module" src="/src/main.tsx"></script>

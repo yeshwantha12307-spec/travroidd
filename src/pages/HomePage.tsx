@@ -25,6 +25,7 @@ import {
 import { useBookings } from '../context/BookingContext';
 import { formatINR } from '../data/destinations';
 import { SEO } from '../components/SEO';
+import { PromotionalOffers } from '../components/PromotionalOffers';
 
 export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPlanModal }) => {
   const { destinations } = useBookings();
@@ -658,86 +659,9 @@ export const HomePage: React.FC<{ onOpenPlanModal?: () => void }> = ({ onOpenPla
       </section>
 
       {/* ========================================================================= */}
-      {/* 4. ALL INDIA COMPREHENSIVE TRAVEL GUIDE & REGIONAL DIRECTORY */}
+      {/* 4. PROMOTIONAL OFFERS (COLLEGE / IV & SCHOOL SPECIAL OFFERS) */}
       {/* ========================================================================= */}
-      <section className="mx-auto w-full max-w-7xl px-4 py-8 sm:py-12 sm:px-6">
-        <div className="rounded-3xl bg-slate-50/80 p-6 sm:p-10 border border-slate-100">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3.5 py-1 text-xs font-bold text-[#0B5ED7] border border-blue-100">
-              <ShieldCheck className="h-3.5 w-3.5" /> Handpicked Holiday Packages
-            </div>
-            <h2 className="mt-3 text-2xl sm:text-3xl font-extrabold text-[#0A2A66] tracking-tight">
-              All India Budget Tour Packages Under ₹20,000
-            </h2>
-            <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-              Travroidd is an all India travel partner based in Puducherry, committed to making memorable holidays accessible. We specialize in well-planned, budget-friendly tours across India’s most iconic destinations—from holy temples and royal heritage palaces to scenic hill stations, backwaters, and pristine beach escapes.
-            </p>
-          </div>
-
-          {/* Regional Quick Discovery Directory */}
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="rounded-2xl bg-white p-5 shadow-sm border border-slate-100">
-              <h3 className="text-base font-bold text-[#0A2A66] flex items-center gap-2">
-                <Palmtree className="h-4 w-4 text-[#0B5ED7]" /> Beach & Coastal Escapes
-              </h3>
-              <p className="mt-2 text-xs text-slate-600 leading-relaxed">
-                Golden sands and water sports in{' '}
-                <Link to="/destinations/goa" className="font-semibold text-[#0B5ED7] hover:underline">Goa (₹7,999)</Link>, red cliffs in{' '}
-                <Link to="/destinations/varkala" className="font-semibold text-[#0B5ED7] hover:underline">Varkala (₹7,999)</Link>, turquoise islands in{' '}
-                <Link to="/destinations/andaman" className="font-semibold text-[#0B5ED7] hover:underline">Andaman (₹12,999)</Link>, southern tip at{' '}
-                <Link to="/destinations/kanyakumari" className="font-semibold text-[#0B5ED7] hover:underline">Kanyakumari (₹9,999)</Link>, and luxury party cruise in our{' '}
-                <Link to="/destinations/party-package" className="font-semibold text-[#0B5ED7] hover:underline">Night Out & Party Package (₹4,999)</Link>.
-              </p>
-            </div>
-
-            <div className="rounded-2xl bg-white p-5 shadow-sm border border-slate-100">
-              <h3 className="text-base font-bold text-[#0A2A66] flex items-center gap-2">
-                <Mountain className="h-4 w-4 text-[#0B5ED7]" /> Hill Stations & Mountain Treks
-              </h3>
-              <p className="mt-2 text-xs text-slate-600 leading-relaxed">
-                Snow peaks and valleys in{' '}
-                <Link to="/destinations/manali" className="font-semibold text-[#0B5ED7] hover:underline">Manali (₹8,999)</Link>, high passes in{' '}
-                <Link to="/destinations/kashmir" className="font-semibold text-[#0B5ED7] hover:underline">Kashmir & Ladakh (₹12,999)</Link>, misty monasteries in{' '}
-                <Link to="/destinations/tawang" className="font-semibold text-[#0B5ED7] hover:underline">Tawang (₹11,999)</Link>, Tibetan haven in{' '}
-                <Link to="/destinations/dharamshala" className="font-semibold text-[#0B5ED7] hover:underline">Dharamshala (₹7,999)</Link>, riverside trails in{' '}
-                <Link to="/destinations/kasol" className="font-semibold text-[#0B5ED7] hover:underline">Kasol (₹6,999)</Link>, colonial ridges in{' '}
-                <Link to="/destinations/shimla" className="font-semibold text-[#0B5ED7] hover:underline">Shimla (₹7,999)</Link>, and South India hills in{' '}
-                <Link to="/destinations/ooty" className="font-semibold text-[#0B5ED7] hover:underline">Ooty (₹8,499)</Link>,{' '}
-                <Link to="/destinations/kodaikanal" className="font-semibold text-[#0B5ED7] hover:underline">Kodaikanal (₹8,999)</Link>, and{' '}
-                <Link to="/destinations/munnar" className="font-semibold text-[#0B5ED7] hover:underline">Munnar (₹8,999)</Link>.
-              </p>
-            </div>
-
-            <div className="rounded-2xl bg-white p-5 shadow-sm border border-slate-100">
-              <h3 className="text-base font-bold text-[#0A2A66] flex items-center gap-2">
-                <Landmark className="h-4 w-4 text-[#0B5ED7]" /> Heritage, Palaces & Culture
-              </h3>
-              <p className="mt-2 text-xs text-slate-600 leading-relaxed">
-                Wonders of the world at{' '}
-                <Link to="/destinations/taj-mahal" className="font-semibold text-[#0B5ED7] hover:underline">Taj Mahal (Agra, ₹6,999)</Link>, spiritual peace at{' '}
-                <Link to="/destinations/golden-temple" className="font-semibold text-[#0B5ED7] hover:underline">Golden Temple (Amritsar, ₹6,999)</Link>, royal splendor at{' '}
-                <Link to="/destinations/mysuru-palace" className="font-semibold text-[#0B5ED7] hover:underline">Mysuru Palace (₹2,999)</Link>, pink sandstone facades at{' '}
-                <Link to="/destinations/hawa-mahal" className="font-semibold text-[#0B5ED7] hover:underline">Hawa Mahal (Jaipur, ₹5,999)</Link>, city of pearls at{' '}
-                <Link to="/destinations/hyderabad" className="font-semibold text-[#0B5ED7] hover:underline">Hyderabad (₹5,999)</Link>, ancient ruins in{' '}
-                <Link to="/destinations/hampi" className="font-semibold text-[#0B5ED7] hover:underline">Hampi (₹9,999)</Link>, and island shrine at{' '}
-                <Link to="/destinations/rameswaram" className="font-semibold text-[#0B5ED7] hover:underline">Rameswaram (₹8,999)</Link>.
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-200/60 text-xs text-slate-600">
-            <p>
-              Every package includes verified accommodation, local sightseeing, daily breakfast, and complete on-trip coordination with zero hidden costs.
-            </p>
-            <Link
-              to="/destinations"
-              className="font-bold text-[#0B5ED7] hover:underline inline-flex items-center gap-1"
-            >
-              Browse all 27 verified destinations →
-            </Link>
-          </div>
-        </div>
-      </section>
+      <PromotionalOffers onOpenPlanModal={onOpenPlanModal} />
 
       {/* ========================================================================= */}
       {/* 5. EXPLORE INDIA WITH TRAVROIDD BANNER */}

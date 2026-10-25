@@ -9,53 +9,60 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({
   onComplete,
   forceShow = false,
 }) => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    if (forceShow) return true;
+    try {
+      const prefersReducedMotion = window.matchMedia?.(
+        '(prefers-reduced-motion: reduce)'
+      )?.matches;
+      const hasSeenIntro = sessionStorage.getItem('travroidd_intro_seen');
+      return !(hasSeenIntro === 'true' || prefersReducedMotion);
+    } catch {
+      return false;
+    }
+  });
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
   useEffect(() => {
-    // Check reduced motion preference
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
-
-    // Check if intro was already shown in this session
-    const hasSeenIntro = sessionStorage.getItem('travroidd_intro_seen');
-
-    if ((hasSeenIntro && !forceShow) || prefersReducedMotion) {
-      setIsVisible(false);
+    if (!isVisible) {
       onComplete?.();
       return;
     }
 
-    // Step 1: Initial mount (Logo starts scaling and fading in)
+    // Step 2: Gentle flight glide & lift (smooth handoff from preloader)
     const timerStep2 = setTimeout(() => {
-      setStep(2); // Logo gentle glide & flight lift
-    }, 400);
+      setStep(2);
+    }, 250);
 
     // Step 3: Reveal Travroidd brand typography
     const timerStep3 = setTimeout(() => {
       setStep(3);
-    }, 850);
+    }, 750);
 
     // Step 4: Begin graceful fade-out
     const timerFadeOut = setTimeout(() => {
       setIsFadingOut(true);
-    }, 2100);
+    }, 1900);
 
     // Step 5: Complete and unmount
     const timerComplete = setTimeout(() => {
-      sessionStorage.setItem('travroidd_intro_seen', 'true');
+      try {
+        sessionStorage.setItem('travroidd_intro_seen', 'true');
+      } catch {}
       setIsVisible(false);
       onComplete?.();
-    }, 2800);
+    }, 2500);
 
     // Fail-safe timeout to guarantee website is NEVER stuck
     const failSafeTimer = setTimeout(() => {
-      sessionStorage.setItem('travroidd_intro_seen', 'true');
+      try {
+        sessionStorage.setItem('travroidd_intro_seen', 'true');
+      } catch {}
       setIsVisible(false);
       onComplete?.();
-    }, 3200);
+    }, 2900);
 
     return () => {
       clearTimeout(timerStep2);
@@ -64,10 +71,12 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({
       clearTimeout(timerComplete);
       clearTimeout(failSafeTimer);
     };
-  }, [forceShow, onComplete]);
+  }, [forceShow, isVisible, onComplete]);
 
   const handleSkip = () => {
-    sessionStorage.setItem('travroidd_intro_seen', 'true');
+    try {
+      sessionStorage.setItem('travroidd_intro_seen', 'true');
+    } catch {}
     setIsFadingOut(true);
     setTimeout(() => {
       setIsVisible(false);
@@ -105,8 +114,8 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({
         <div
           className={`transition-all duration-700 ease-out transform ${
             step >= 2
-              ? '-translate-y-2 translate-x-1.5 scale-100 rotate-1'
-              : 'translate-y-4 scale-90 rotate-0 opacity-0'
+              ? '-translate-y-2 translate-x-1.5 scale-100 rotate-1 opacity-100'
+              : 'translate-y-0 scale-95 rotate-0 opacity-100'
           }`}
           style={{
             filter: 'drop-shadow(0 20px 30px rgba(11, 94, 215, 0.20))',
