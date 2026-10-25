@@ -11,11 +11,11 @@ if (!fs.existsSync(outDir)) {
   fs.mkdirSync(outDir, { recursive: true });
 }
 
-const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
+const baseUrl = process.env.TARGET_URL || 'http://localhost:4173';
 
 (async () => {
   console.log('====================================================');
-  console.log(`TRAVROIDD INITIAL LOADER & PROMOTIONAL OFFERS AUDIT (${baseUrl})`);
+  console.log(`TRAVROIDD EDITORIAL CAMPAIGNS & LOADER AUDIT (${baseUrl})`);
   console.log('====================================================\n');
 
   const browser = await puppeteer.launch({
@@ -32,6 +32,7 @@ const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
     promoPositionProminent: false,
     cardAFound: false,
     cardBFound: false,
+    imagesLoaded: false,
     discountsCorrect: false,
     whatsappLinksValid: false,
     innerPageDirectNav: false,
@@ -50,7 +51,6 @@ const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
     console.log('1. Testing Fresh Page Load on Desktop...');
     await page.setViewport({ width: 1280, height: 800 });
 
-    // Verify initial raw HTML sent from server contains the branded preloader
     const rawHtml = await fetch(`${baseUrl}/`).then(r => r.text());
     const hasPreloaderInHtml = rawHtml.includes('id="travroidd-preloader"') &&
       rawHtml.includes('src="/assets/travroidd-logo.webp"');
@@ -59,11 +59,9 @@ const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
 
     console.log('   Raw HTML Preloader check:', { hasPreloaderInHtml, hasCrawlerInNoscript });
 
-    // Navigate to homepage without setting sessionStorage
     const navPromise = page.goto(`${baseUrl}/`, { waitUntil: 'domcontentloaded' });
     await navPromise;
 
-    // Immediately inspect DOM at first render
     const initialDOM = await page.evaluate(() => {
       const preloader = document.getElementById('travroidd-preloader');
       const introAnim = document.querySelector('[role="status"]');
@@ -71,7 +69,6 @@ const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
       return {
         hasPreloader: !!preloader,
         hasIntroAnim: !!introAnim,
-        // Check if raw crawler text is leaking into viewport
         hasRawCrawlerHeading: Array.from(document.querySelectorAll('h1, h2, h3'))
           .filter(h => h.closest('#root') && !h.closest('#travroidd-preloader') && !h.closest('[role="status"]'))
           .some(h => h.innerText.includes('Travroidd — All India Budget Tour Packages'))
@@ -156,9 +153,9 @@ const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
     console.log(`   ✓ Old Budget Content Section Removed: ${isOldSectionGone ? 'PASS' : 'FAIL'}`);
 
     // -------------------------------------------------------------------------
-    // TEST 4: VERIFY NEW PROMOTIONAL OFFERS (CARD A & CARD B)
+    // TEST 4: VERIFY EDITORIAL PROMOTIONAL CAMPAIGNS (CAMPAIGN 1 & CAMPAIGN 2)
     // -------------------------------------------------------------------------
-    console.log('\n4. Auditing New Promotional Offer Cards & Placement...');
+    console.log('\n4. Auditing Editorial Promotional Campaigns & Photography...');
     const promoSection = await page.evaluate(() => {
       const section = document.getElementById('promotional-offers');
       if (!section) return null;
@@ -177,26 +174,39 @@ const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
 
       const textContent = section.innerText;
 
+      // Images verification
+      const imgCollege = section.querySelector('img[src*="college_tour_campaign"]');
+      const imgSchool = section.querySelector('img[src*="school_tour_campaign"]');
+
       return {
         exists: true,
         isBeforePopular,
         hasBadge30: !!badge30,
         hasBadge40: !!badge40,
+        hasCollegeImg: !!imgCollege && imgCollege.naturalWidth > 0,
+        hasSchoolImg: !!imgSchool && imgSchool.naturalWidth > 0,
         hasCollegeBtn: !!collegeBtn,
         collegeBtnText: collegeBtn?.innerText.trim(),
         collegeBtnHref: collegeBtn?.href,
         hasSchoolBtn: !!schoolBtn,
         schoolBtnText: schoolBtn?.innerText.trim(),
         schoolBtnHref: schoolBtn?.href,
-        hasCollegeHeading: textContent.includes('College Tour & Industrial Visit'),
-        hasSchoolHeading: textContent.includes('School Educational Tours'),
-        hasIndustrialVisitCities: textContent.includes('Chennai, Bangalore, Hyderabad, Mumbai'),
-        hasCollegePlans: textContent.includes('2-day, 3-day, 5-day, and 7-day plans'),
-        hasSchoolPlans: textContent.includes('1-day, 2-day, 3-day, and 5-day plans'),
-        hasBonafide: textContent.includes('Company permission and bonafide assistance'),
-        hasTransportA: textContent.includes('AC / Non-AC Transport'),
-        hasSafeHotelB: textContent.includes('Safe Hotel & Food Arrangements'),
-        hasTeacherStudentSupport: textContent.includes('Teacher and student support'),
+        hasCollegeHeading: textContent.includes('Your Next Campus Adventure Starts Here.'),
+        hasCollegeCampaignLabel: textContent.includes('COLLEGE & INDUSTRIAL VISIT EXPERIENCES'),
+        hasSchoolHeading: textContent.includes('Learning Beyond the Classroom.'),
+        hasSchoolCampaignLabel: textContent.includes('SCHOOL EDUCATIONAL EXPERIENCES'),
+        hasCollegeBenefits: textContent.includes('Industrial Visits') &&
+          textContent.includes('Food & Stay') &&
+          textContent.includes('AC / Non-AC Transport') &&
+          textContent.includes('Company Permission & Bonafide Assistance') &&
+          textContent.includes('Certificate & Trip Support'),
+        hasSchoolBenefits: textContent.includes('Educational & Heritage Tours') &&
+          textContent.includes('Safe Hotel & Food Arrangements') &&
+          textContent.includes('AC / Non-AC Transport') &&
+          textContent.includes('Teacher & Student Support') &&
+          textContent.includes('Educational Guidance & Trip Assistance'),
+        hasCollegePlans: textContent.includes('2-Day, 3-Day, 5-Day & 7-Day Plans'),
+        hasSchoolPlans: textContent.includes('1-Day, 2-Day, 3-Day & 5-Day Plans'),
         hasDisclaimer: textContent.includes('Special promotional discounts apply to institutional group bookings')
       };
     });
@@ -204,11 +214,14 @@ const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
     console.log('   Promotional Section Audit Details:', promoSection);
 
     testResults.promoPositionProminent = promoSection?.isBeforePopular;
-    testResults.cardAFound = promoSection?.hasCollegeHeading && promoSection?.hasBadge30;
-    testResults.cardBFound = promoSection?.hasSchoolHeading && promoSection?.hasBadge40;
+    testResults.cardAFound = promoSection?.hasCollegeHeading && promoSection?.hasBadge30 && promoSection?.hasCollegeBenefits;
+    testResults.cardBFound = promoSection?.hasSchoolHeading && promoSection?.hasBadge40 && promoSection?.hasSchoolBenefits;
+    testResults.imagesLoaded = promoSection?.hasCollegeImg && promoSection?.hasSchoolImg;
     testResults.discountsCorrect = promoSection?.hasBadge30 && promoSection?.hasBadge40;
     testResults.whatsappLinksValid = promoSection?.collegeBtnHref?.includes('wa.me') &&
-      promoSection?.schoolBtnHref?.includes('wa.me');
+      promoSection?.schoolBtnHref?.includes('wa.me') &&
+      promoSection?.collegeBtnText?.includes('Plan Your College Tour') &&
+      promoSection?.schoolBtnText?.includes('Plan Your School Tour');
 
     // -------------------------------------------------------------------------
     // TEST 5: DIRECT NAVIGATION TO INNER PAGES
@@ -222,7 +235,7 @@ const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
     // -------------------------------------------------------------------------
     // TEST 6: CAPTURE RESPONSIVE SCREENSHOTS
     // -------------------------------------------------------------------------
-    console.log('\n6. Capturing Responsive Screenshots of New Promotional Offers...');
+    console.log('\n6. Capturing Responsive Screenshots of Editorial Promotional Offers...');
     const viewports = [
       { name: 'desktop', width: 1280, height: 900 },
       { name: 'tablet', width: 768, height: 1024 },
@@ -257,11 +270,12 @@ const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
   console.log(`3. Returning Visitor Instant Bypass: ${testResults.returningVisitorSkipped ? 'PASS' : 'FAIL'}`);
   console.log(`4. Old Budget Package Content Removed: ${testResults.oldSectionRemoved ? 'PASS' : 'FAIL'}`);
   console.log(`5. Promotional Section Prominent Placement (Above Popular): ${testResults.promoPositionProminent ? 'PASS' : 'FAIL'}`);
-  console.log(`6. Card A (College / IV 30% OFF): ${testResults.cardAFound ? 'PASS' : 'FAIL'}`);
-  console.log(`7. Card B (School 40% OFF): ${testResults.cardBFound ? 'PASS' : 'FAIL'}`);
-  console.log(`8. WhatsApp Enquiry Buttons Valid: ${testResults.whatsappLinksValid ? 'PASS' : 'FAIL'}`);
-  console.log(`9. Inner Pages Direct Navigation: ${testResults.innerPageDirectNav ? 'PASS' : 'FAIL'}`);
-  console.log(`10. Console Errors: ${testResults.errors.length}`);
+  console.log(`6. Campaign 1 (College & IV 30% OFF): ${testResults.cardAFound ? 'PASS' : 'FAIL'}`);
+  console.log(`7. Campaign 2 (School Educational 40% OFF): ${testResults.cardBFound ? 'PASS' : 'FAIL'}`);
+  console.log(`8. High-Res Editorial Photography Loaded: ${testResults.imagesLoaded ? 'PASS' : 'FAIL'}`);
+  console.log(`9. WhatsApp Enquiry Buttons Valid: ${testResults.whatsappLinksValid ? 'PASS' : 'FAIL'}`);
+  console.log(`10. Inner Pages Direct Navigation: ${testResults.innerPageDirectNav ? 'PASS' : 'FAIL'}`);
+  console.log(`11. Console Errors: ${testResults.errors.length}`);
   console.log('====================================================\n');
 
   const allPassed = testResults.loaderInitialState?.hasPreloader &&
@@ -271,6 +285,7 @@ const baseUrl = process.env.TARGET_URL || 'http://localhost:5173';
     testResults.promoPositionProminent &&
     testResults.cardAFound &&
     testResults.cardBFound &&
+    testResults.imagesLoaded &&
     testResults.whatsappLinksValid &&
     testResults.innerPageDirectNav;
 

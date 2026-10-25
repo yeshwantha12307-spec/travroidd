@@ -4,7 +4,6 @@ import {
   School,
   Sparkles,
   ShieldCheck,
-  Wallet,
   Utensils,
   Bus,
   FileCheck,
@@ -14,8 +13,8 @@ import {
   Clock,
   MapPin,
   MessageCircle,
-  CheckCircle2,
   ArrowRight,
+  BookOpen,
 } from 'lucide-react';
 import { getWhatsAppUrl } from '../data/destinations';
 
@@ -25,327 +24,298 @@ interface PromotionalOffersProps {
 
 export const PromotionalOffers: React.FC<PromotionalOffersProps> = ({ onOpenPlanModal }) => {
   const collegeWhatsAppMsg =
-    "Hi Travroidd! I would like to enquire about the College Tour & Industrial Visit Special Offer (30% OFF). Please share package details, itineraries, and group quotes.";
+    "Hi Travroidd! I would like to plan a College Tour & Industrial Visit (30% OFF). Please share package details, itineraries, and group quotes.";
 
   const schoolWhatsAppMsg =
-    "Hi Travroidd! I would like to enquire about the School Educational Tours Special Offer (40% OFF). Please share package details, itineraries, and group quotes.";
+    "Hi Travroidd! I would like to plan a School Educational Tour (40% OFF). Please share package details, itineraries, and group quotes.";
 
   return (
     <section
       id="promotional-offers"
-      className="mx-auto w-full max-w-7xl px-4 py-12 sm:py-16 sm:px-6"
+      className="mx-auto w-full max-w-7xl px-4 py-12 sm:py-20 sm:px-6"
       aria-label="Promotional Group Offers"
     >
-      {/* Section Header */}
-      <div className="mb-10 text-center max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-1.5 text-xs font-bold text-[#0B5ED7] border border-blue-100 mb-3 shadow-xs">
-          <Sparkles className="h-3.5 w-3.5" />
-          <span>Exclusive Group &amp; Institutional Offers</span>
+      {/* Editorial Section Header */}
+      <div className="mb-12 sm:mb-16 text-center max-w-3xl mx-auto">
+        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50/80 px-4 py-1.5 text-xs font-bold tracking-wider uppercase text-[#0B5ED7] border border-blue-100 mb-4 shadow-xs backdrop-blur-sm">
+          <Sparkles className="h-3.5 w-3.5 text-[#0B5ED7]" />
+          <span>Curated Institutional Experiences</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0A2A66] tracking-tight">
-          Special Educational &amp; Institutional Tour Packages
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0A2A66] tracking-tight leading-tight">
+          Inspiring Student Journeys Across India
         </h2>
-        <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed">
-          Tailored group travel solutions across India with complete safety, verified accommodation, comfortable transport, and full coordinator support.
+        <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed font-normal">
+          From high-impact industrial innovation visits to transformative heritage expeditions, we craft fully coordinated, secure, and memorable group travel.
         </p>
       </div>
 
-      {/* Two Promotional Cards Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10">
+      <div className="space-y-12 sm:space-y-16">
         {/* ========================================================================= */}
-        {/* CARD A — College Tour & Industrial Visit (30% OFF) */}
+        {/* CAMPAIGN 1: COLLEGE & INDUSTRIAL VISIT OFFER — 30% OFF */}
         {/* ========================================================================= */}
-        <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-[#0B2E63] text-white shadow-xl transition-all duration-300 hover:shadow-2xl border border-blue-900/40">
-          {/* Subtle Ambient Background Image & Gradient */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <img
-              src="/assets/destinations/Goa/Goa Tropical Beach Escape-3.webp"
-              alt="College Tour & Industrial Visit Background"
-              className="h-full w-full object-cover opacity-15 transition-transform duration-700 group-hover:scale-105"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0B2E63] via-[#0A2557]/95 to-[#081B3E]/90" />
-            <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-cyan-500/10 blur-3xl pointer-events-none" />
-          </div>
+        <article className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0B2E63] via-[#0A2557] to-[#071D42] text-white shadow-2xl border border-blue-900/50 transition-all duration-300">
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
+            {/* Visual Photography Column (7 cols on desktop) */}
+            <div className="relative min-h-[300px] sm:min-h-[380px] lg:min-h-full lg:col-span-7 overflow-hidden">
+              <img
+                src="/assets/promotions/college_tour_campaign.jpg"
+                alt="College students exploring industrial tech campus in Bengaluru"
+                className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                loading="lazy"
+              />
+              {/* Subtle cinematic gradient overlays */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A2557] via-transparent to-black/30 lg:bg-gradient-to-r lg:from-transparent lg:via-[#0A2557]/40 lg:to-[#0A2557]" />
 
-          {/* Card Content */}
-          <div className="relative z-10 p-6 sm:p-8 flex-1 flex flex-col">
-            {/* Top Badge & Header */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-400/20 px-3.5 py-1 text-xs font-bold text-sky-200 border border-sky-300/30 backdrop-blur-sm">
-                <GraduationCap className="h-4 w-4 text-sky-300" />
-                College Tour &amp; IV Packages
-              </span>
-
-              {/* 30% OFF Discount Badge */}
-              <span className="inline-flex items-center gap-1 rounded-full bg-amber-400 px-3.5 py-1 text-xs font-black tracking-wider text-slate-950 shadow-md animate-pulse">
-                30% OFF
-              </span>
-            </div>
-
-            {/* Main Heading & Tagline */}
-            <div className="mt-5">
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
-                College Tour &amp; Industrial Visit
-              </h3>
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-sky-300 font-semibold text-xs sm:text-sm">
-                <span className="flex items-center gap-1 text-amber-300 font-bold">
-                  <MapPin className="h-3.5 w-3.5" /> All India • Any Place
+              {/* Floating 30% OFF Badge */}
+              <div className="absolute top-5 left-5 z-20 flex items-center gap-2 rounded-2xl border border-white/20 bg-slate-950/75 px-4 py-2 shadow-2xl backdrop-blur-md">
+                <span className="font-brand text-2xl sm:text-3xl font-black text-amber-400 tracking-tight">
+                  30% OFF
                 </span>
-                <span>•</span>
-                <span className="italic text-blue-100">Industrial Visits, Friends, Fun &amp; Memories</span>
-              </div>
-              <p className="mt-3 text-xs sm:text-sm text-slate-200 leading-relaxed">
-                Special 30% discount offer on IV and college tours across India — industrial visits, friends, fun, and lifelong memories.
-              </p>
-            </div>
-
-            {/* Tour Options */}
-            <div className="mt-6 rounded-2xl bg-white/10 p-4 sm:p-5 backdrop-blur-md border border-white/10">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-sky-200 flex items-center gap-1.5 mb-3">
-                <Compass className="h-4 w-4 text-sky-300" /> Tour Options from Flyer
-              </h4>
-              <ul className="space-y-2 text-xs sm:text-sm text-slate-100">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>Industrial Visits:</strong> Chennai, Bangalore, Hyderabad, Mumbai tech &amp; manufacturing</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>North India College Tour:</strong> Delhi, Agra, Manali &amp; Chandigarh</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>South India &amp; Goa Tour:</strong> Beaches, Coastal Drives &amp; Culture</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>Hill Stations &amp; Adventure Tours:</strong> Ooty, Kodaikanal, Munnar &amp; Coorg</span>
-                </li>
-              </ul>
-
-              {/* Duration plans pill */}
-              <div className="mt-3.5 pt-3 border-t border-white/10 flex items-center gap-2 text-xs text-sky-200">
-                <Clock className="h-3.5 w-3.5 text-amber-300" />
-                <span className="font-semibold text-white">Available Plans:</span>
-                <span>2-day, 3-day, 5-day, and 7-day plans</span>
-              </div>
-            </div>
-
-            {/* Key Benefits */}
-            <div className="mt-6">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-sky-200 flex items-center gap-1.5 mb-3">
-                <ShieldCheck className="h-4 w-4 text-sky-300" /> Safe &amp; Secure Arrangements
-              </h4>
-              <div className="grid grid-cols-2 gap-2.5 text-xs text-slate-200">
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Safe &amp; Secure Arrangements</span>
-                </div>
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Utensils className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Food &amp; Stay</span>
-                </div>
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Bus className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>AC / Non-AC Transport</span>
-                </div>
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Wallet className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>30% Discount Savings</span>
-                </div>
-                <div className="col-span-2 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <FileCheck className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Company permission and bonafide assistance</span>
-                </div>
-                <div className="col-span-2 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Award className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Industrial certificate assistance</span>
-                </div>
-                <div className="col-span-2 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Compass className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Guide and trip support</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Action CTAs */}
-          <div className="relative z-10 p-6 sm:p-8 pt-0 flex flex-col sm:flex-row items-center gap-3">
-            <a
-              href={getWhatsAppUrl(collegeWhatsAppMsg)}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Enquire About College Tours on WhatsApp"
-              title="Enquire About College Tours on WhatsApp"
-              className="w-full sm:flex-1 inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-[#25D366] px-6 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:bg-[#20ba5a] hover:scale-[1.02] active:scale-95 cursor-pointer"
-            >
-              <MessageCircle className="h-4 w-4" />
-              <span>Enquire About College Tours</span>
-            </a>
-
-            {onOpenPlanModal && (
-              <button
-                type="button"
-                onClick={onOpenPlanModal}
-                className="w-full sm:w-auto inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 text-xs font-semibold text-white shadow-sm transition hover:bg-white hover:text-[#0B2E63] cursor-pointer"
-              >
-                <span>Custom Plan</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* ========================================================================= */}
-        {/* CARD B — School Educational Tours (40% OFF) */}
-        {/* ========================================================================= */}
-        <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl bg-[#063B6B] text-white shadow-xl transition-all duration-300 hover:shadow-2xl border border-sky-900/40">
-          {/* Subtle Ambient Background Image & Gradient */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <img
-              src="/assets/destinations/TajMahal/taj_mahal.webp"
-              alt="School Educational Tour Background"
-              className="h-full w-full object-cover opacity-15 transition-transform duration-700 group-hover:scale-105"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#063B6B] via-[#0A2A66]/95 to-[#082855]/90" />
-            <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-          </div>
-
-          {/* Card Content */}
-          <div className="relative z-10 p-6 sm:p-8 flex-1 flex flex-col">
-            {/* Top Badge & Header */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-400/20 px-3.5 py-1 text-xs font-bold text-sky-200 border border-sky-300/30 backdrop-blur-sm">
-                <School className="h-4 w-4 text-sky-300" />
-                School Educational Tours
-              </span>
-
-              {/* 40% OFF Discount Badge */}
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400 px-3.5 py-1 text-xs font-black tracking-wider text-slate-950 shadow-md animate-pulse">
-                40% OFF
-              </span>
-            </div>
-
-            {/* Main Heading & Tagline */}
-            <div className="mt-5">
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
-                School Educational Tours
-              </h3>
-              <div className="mt-2 flex flex-wrap items-center gap-2 text-sky-300 font-semibold text-xs sm:text-sm">
-                <span className="flex items-center gap-1 text-amber-300 font-bold">
-                  <MapPin className="h-3.5 w-3.5" /> All India • Any Place
+                <span className="h-6 w-px bg-white/20" />
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-200 leading-tight">
+                  Special<br />Group Offer
                 </span>
-                <span>•</span>
-                <span className="italic text-blue-100">Educational Tours, Fun &amp; Memories</span>
               </div>
-              <p className="mt-3 text-xs sm:text-sm text-slate-200 leading-relaxed">
-                40% discount offer on all-India school educational tours — fun, learning, and lifelong memories.
-              </p>
-            </div>
 
-            {/* Tour Options */}
-            <div className="mt-6 rounded-2xl bg-white/10 p-4 sm:p-5 backdrop-blur-md border border-white/10">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-sky-200 flex items-center gap-1.5 mb-3">
-                <Compass className="h-4 w-4 text-sky-300" /> Tour Options from Flyer
-              </h4>
-              <ul className="space-y-2 text-xs sm:text-sm text-slate-100">
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>North India Educational Tours:</strong> Delhi Heritage, Taj Mahal &amp; Science Centers</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>South India Heritage Tours:</strong> Mysuru, Hampi, Thanjavur &amp; Madurai</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>Hill Stations &amp; Nature Tours:</strong> Botanical Reserves, Ooty, Munnar &amp; Coorg</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
-                  <span><strong>Custom School Tours:</strong> Anywhere in India tailored to syllabus &amp; school calendar</span>
-                </li>
-              </ul>
-
-              {/* Duration plans pill */}
-              <div className="mt-3.5 pt-3 border-t border-white/10 flex items-center gap-2 text-xs text-sky-200">
-                <Clock className="h-3.5 w-3.5 text-amber-300" />
-                <span className="font-semibold text-white">Available Plans:</span>
-                <span>1-day, 2-day, 3-day, and 5-day plans</span>
+              {/* Bottom Location & Theme Chip */}
+              <div className="absolute bottom-5 left-5 right-5 z-20 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-950/60 px-3.5 py-1.5 text-xs font-semibold text-sky-200 backdrop-blur-md border border-white/10">
+                  <MapPin className="h-3.5 w-3.5 text-amber-400" />
+                  <span>All India • Any Place</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-blue-500/30 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur-md border border-white/10">
+                  <GraduationCap className="h-3.5 w-3.5 text-sky-300" />
+                  <span>Campus Groups &amp; Engineering IVs</span>
+                </span>
               </div>
             </div>
 
-            {/* Key Benefits */}
-            <div className="mt-6">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-sky-200 flex items-center gap-1.5 mb-3">
-                <ShieldCheck className="h-4 w-4 text-sky-300" /> Safe Hotel &amp; Food Arrangements
-              </h4>
-              <div className="grid grid-cols-2 gap-2.5 text-xs text-slate-200">
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <ShieldCheck className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Safe Hotel &amp; Food Arrangements</span>
+            {/* Editorial Content Column (5 cols on desktop) */}
+            <div className="relative z-10 flex flex-col justify-between p-6 sm:p-8 lg:p-10 lg:col-span-5 bg-gradient-to-b from-[#0A2557]/90 to-[#071D42]/95 backdrop-blur-xs">
+              <div>
+                {/* Campaign Eyebrow Label */}
+                <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em] text-sky-300">
+                  <GraduationCap className="h-4 w-4 text-amber-400" />
+                  <span>COLLEGE &amp; INDUSTRIAL VISIT EXPERIENCES</span>
                 </div>
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Bus className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>AC / Non-AC Transport</span>
+
+                {/* Main Heading */}
+                <h3 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug">
+                  Your Next Campus Adventure Starts Here.
+                </h3>
+
+                {/* Supporting Text */}
+                <p className="mt-3 text-sm sm:text-base text-slate-200 leading-relaxed font-normal">
+                  Industrial visits, college tours, new destinations and unforgettable memories — across India.
+                </p>
+
+                {/* Key Benefits Labels */}
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-sky-300/90 mb-3">
+                    Key Inclusions &amp; Support
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-white border border-white/10 backdrop-blur-sm">
+                      <Compass className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Industrial Visits</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-white border border-white/10 backdrop-blur-sm">
+                      <Utensils className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Food &amp; Stay</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-white border border-white/10 backdrop-blur-sm">
+                      <Bus className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>AC / Non-AC Transport</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-white border border-white/10 backdrop-blur-sm">
+                      <FileCheck className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Company Permission &amp; Bonafide Assistance</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-white border border-white/10 backdrop-blur-sm">
+                      <Award className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Certificate &amp; Trip Support</span>
+                    </span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <GraduationCap className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Educational Tours</span>
+
+                {/* Duration & Popular Circuits Pill */}
+                <div className="mt-4 rounded-xl bg-white/5 p-3 border border-white/5 text-xs text-sky-200">
+                  <div className="flex items-center gap-1.5 font-semibold text-white">
+                    <Clock className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                    <span>2-Day, 3-Day, 5-Day &amp; 7-Day Plans</span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-300">
+                    Industrial visits: Chennai, Bangalore, Hyderabad, Mumbai • Hill stations: Ooty, Munnar, Goa
+                  </p>
                 </div>
-                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Wallet className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>40% Discount Savings</span>
-                </div>
-                <div className="col-span-2 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Compass className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Educational guidance and trip assistance</span>
-                </div>
-                <div className="col-span-2 flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 border border-white/5">
-                  <Users className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
-                  <span>Teacher and student support</span>
-                </div>
+              </div>
+
+              {/* Action CTAs Row */}
+              <div className="mt-8 pt-4 flex flex-col sm:flex-row items-center gap-3">
+                <a
+                  href={getWhatsAppUrl(collegeWhatsAppMsg)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Plan Your College Tour on WhatsApp"
+                  title="Plan Your College Tour on WhatsApp"
+                  className="w-full sm:flex-1 inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-[#25D366] px-6 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:bg-[#20ba5a] hover:scale-[1.02] active:scale-95 cursor-pointer"
+                >
+                  <MessageCircle className="h-4 w-4 shrink-0" />
+                  <span>Plan Your College Tour</span>
+                  <ArrowRight className="h-4 w-4 shrink-0" />
+                </a>
+
+                {onOpenPlanModal && (
+                  <button
+                    type="button"
+                    onClick={onOpenPlanModal}
+                    className="w-full sm:w-auto inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-white hover:text-[#0B2E63] cursor-pointer"
+                  >
+                    <span>Custom Plan</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
+        </article>
 
-          {/* Action CTAs */}
-          <div className="relative z-10 p-6 sm:p-8 pt-0 flex flex-col sm:flex-row items-center gap-3">
-            <a
-              href={getWhatsAppUrl(schoolWhatsAppMsg)}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Enquire About School Tours on WhatsApp"
-              title="Enquire About School Tours on WhatsApp"
-              className="w-full sm:flex-1 inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-[#25D366] px-6 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:bg-[#20ba5a] hover:scale-[1.02] active:scale-95 cursor-pointer"
-            >
-              <MessageCircle className="h-4 w-4" />
-              <span>Enquire About School Tours</span>
-            </a>
+        {/* ========================================================================= */}
+        {/* CAMPAIGN 2: SCHOOL EDUCATIONAL TOUR OFFER — 40% OFF */}
+        {/* ========================================================================= */}
+        <article className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#083358] via-[#062846] to-[#041C33] text-white shadow-2xl border border-sky-900/50 transition-all duration-300">
+          <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
+            {/* Editorial Content Column (5 cols on desktop, on left for visual variation) */}
+            <div className="relative z-10 order-last lg:order-first flex flex-col justify-between p-6 sm:p-8 lg:p-10 lg:col-span-5 bg-gradient-to-b from-[#062846]/90 to-[#041C33]/95 backdrop-blur-xs">
+              <div>
+                {/* Campaign Eyebrow Label */}
+                <div className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.2em] text-emerald-300">
+                  <School className="h-4 w-4 text-emerald-400" />
+                  <span>SCHOOL EDUCATIONAL EXPERIENCES</span>
+                </div>
 
-            {onOpenPlanModal && (
-              <button
-                type="button"
-                onClick={onOpenPlanModal}
-                className="w-full sm:w-auto inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 text-xs font-semibold text-white shadow-sm transition hover:bg-white hover:text-[#063B6B] cursor-pointer"
-              >
-                <span>Custom Plan</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </button>
-            )}
+                {/* Main Heading */}
+                <h3 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug">
+                  Learning Beyond the Classroom.
+                </h3>
+
+                {/* Supporting Text */}
+                <p className="mt-3 text-sm sm:text-base text-slate-200 leading-relaxed font-normal">
+                  Discover India's heritage, nature and culture through memorable educational journeys.
+                </p>
+
+                {/* Key Benefits Labels */}
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wider text-emerald-300/90 mb-3">
+                    Key Inclusions &amp; Support
+                  </h4>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-white border border-white/10 backdrop-blur-sm">
+                      <BookOpen className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Educational &amp; Heritage Tours</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-white border border-white/10 backdrop-blur-sm">
+                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Safe Hotel &amp; Food Arrangements</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-white border border-white/10 backdrop-blur-sm">
+                      <Bus className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>AC / Non-AC Transport</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-white border border-white/10 backdrop-blur-sm">
+                      <Users className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Teacher &amp; Student Support</span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 rounded-xl bg-white/10 px-3 py-1.5 text-xs font-medium text-white border border-white/10 backdrop-blur-sm">
+                      <Compass className="h-3.5 w-3.5 text-emerald-400" />
+                      <span>Educational Guidance &amp; Trip Assistance</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Duration & Popular Circuits Pill */}
+                <div className="mt-4 rounded-xl bg-white/5 p-3 border border-white/5 text-xs text-sky-200">
+                  <div className="flex items-center gap-1.5 font-semibold text-white">
+                    <Clock className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                    <span>1-Day, 2-Day, 3-Day &amp; 5-Day Plans</span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-300">
+                    North India &amp; Delhi Heritage • Mysuru &amp; Hampi • Ooty &amp; Munnar botanical reserves
+                  </p>
+                </div>
+              </div>
+
+              {/* Action CTAs Row */}
+              <div className="mt-8 pt-4 flex flex-col sm:flex-row items-center gap-3">
+                <a
+                  href={getWhatsAppUrl(schoolWhatsAppMsg)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Plan Your School Tour on WhatsApp"
+                  title="Plan Your School Tour on WhatsApp"
+                  className="w-full sm:flex-1 inline-flex h-12 items-center justify-center gap-2.5 rounded-full bg-[#25D366] px-6 text-sm font-bold text-white shadow-lg transition-all duration-200 hover:bg-[#20ba5a] hover:scale-[1.02] active:scale-95 cursor-pointer"
+                >
+                  <MessageCircle className="h-4 w-4 shrink-0" />
+                  <span>Plan Your School Tour</span>
+                  <ArrowRight className="h-4 w-4 shrink-0" />
+                </a>
+
+                {onOpenPlanModal && (
+                  <button
+                    type="button"
+                    onClick={onOpenPlanModal}
+                    className="w-full sm:w-auto inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-white hover:text-[#083358] cursor-pointer"
+                  >
+                    <span>Custom Plan</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Visual Photography Column (7 cols on desktop) */}
+            <div className="relative min-h-[300px] sm:min-h-[380px] lg:min-h-full lg:col-span-7 overflow-hidden order-first lg:order-last">
+              <img
+                src="/assets/promotions/school_tour_campaign.jpg"
+                alt="School children on educational field trip visiting Mysuru Palace"
+                className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                loading="lazy"
+              />
+              {/* Subtle cinematic gradient overlays */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#062846] via-transparent to-black/30 lg:bg-gradient-to-l lg:from-transparent lg:via-[#062846]/40 lg:to-[#062846]" />
+
+              {/* Floating 40% OFF Badge */}
+              <div className="absolute top-5 right-5 z-20 flex items-center gap-2 rounded-2xl border border-white/20 bg-slate-950/75 px-4 py-2 shadow-2xl backdrop-blur-md">
+                <span className="font-brand text-2xl sm:text-3xl font-black text-emerald-400 tracking-tight">
+                  40% OFF
+                </span>
+                <span className="h-6 w-px bg-white/20" />
+                <span className="text-[11px] font-bold uppercase tracking-wider text-slate-200 leading-tight">
+                  Educational<br />Group Offer
+                </span>
+              </div>
+
+              {/* Bottom Location & Theme Chip */}
+              <div className="absolute bottom-5 left-5 right-5 z-20 flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-950/60 px-3.5 py-1.5 text-xs font-semibold text-sky-200 backdrop-blur-md border border-white/10">
+                  <MapPin className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>All India • Heritage &amp; Nature</span>
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/30 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur-md border border-white/10">
+                  <School className="h-3.5 w-3.5 text-emerald-300" />
+                  <span>K-12 &amp; High School Excursions</span>
+                </span>
+              </div>
+            </div>
           </div>
-        </div>
+        </article>
       </div>
 
       {/* Verification & Conditions Footnote */}
-      <div className="mt-8 rounded-2xl bg-slate-50 border border-slate-200/80 p-4 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+      <div className="mt-10 rounded-2xl bg-slate-50 border border-slate-200/80 p-4 sm:p-5 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
         <p>
-          * Special promotional discounts apply to institutional group bookings. Terms, minimum group sizes, and custom itinerary options apply. Contact Travroidd travel coordinators for official quotations.
+          * Special promotional discounts apply to institutional group bookings across India. Verified accommodation, certified guides, and custom syllabus itineraries provided.
         </p>
         <span className="font-semibold text-[#0B5ED7] shrink-0">
-          WhatsApp: +91 7339111948
+          WhatsApp Group Coordinator: +91 7339111948
         </span>
       </div>
     </section>
