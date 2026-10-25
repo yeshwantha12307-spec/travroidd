@@ -75,7 +75,7 @@ interface BookingContextType {
 
 const BookingContext = createContext<BookingContextType | null>(null);
 
-const DESTINATIONS_KEY = 'travroidd_destinations_v6';
+const DESTINATIONS_KEY = 'travroidd_destinations_v8';
 const LIKES_KEY = 'travroidd_likes';
 const USER_LIKES_KEY = 'travroidd_user_likes';
 
@@ -173,7 +173,8 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setLoading(true);
     try {
       // 1. Try querying Supabase tables directly
-      if (isAdmin) {
+      const isAuthorizedAdmin = isAdmin && user?.email?.toLowerCase().trim() === 'admin@travroidd.com';
+      if (isAuthorizedAdmin) {
         const { data: sbBookings, error: bErr } = await supabase
           .from('bookings')
           .select('*')
@@ -296,6 +297,11 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       throw new Error('Invalid booking status. Allowed values: pending, confirmed, cancelled.');
     }
 
+    const isAuthorizedAdmin = isAdmin && user?.email?.toLowerCase().trim() === 'admin@travroidd.com';
+    if (!isAuthorizedAdmin) {
+      throw new Error('Access denied: Administrative privileges required.');
+    }
+
     let updateSucceeded = false;
     let failureReason: string | null = null;
 
@@ -374,6 +380,11 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       throw new Error('Invalid or missing booking ID.');
     }
     const cleanId = id.trim();
+
+    const isAuthorizedAdmin = isAdmin && user?.email?.toLowerCase().trim() === 'admin@travroidd.com';
+    if (!isAuthorizedAdmin) {
+      throw new Error('Access denied: Administrative privileges required.');
+    }
 
     let deleteSucceeded = false;
     let failureReason: string | null = null;
@@ -522,6 +533,11 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const deleteEnquiry = async (id: string) => {
+    const isAuthorizedAdmin = isAdmin && user?.email?.toLowerCase().trim() === 'admin@travroidd.com';
+    if (!isAuthorizedAdmin) {
+      throw new Error('Access denied: Administrative privileges required.');
+    }
+
     let deleteSucceeded = false;
     let failureReason: string | null = null;
 
@@ -589,16 +605,28 @@ export const BookingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const updateDestination = (updated: Destination) => {
+    const isAuthorizedAdmin = isAdmin && user?.email?.toLowerCase().trim() === 'admin@travroidd.com';
+    if (!isAuthorizedAdmin) {
+      throw new Error('Access denied: Administrative privileges required.');
+    }
     setDestinations((prev) =>
       prev.map((d) => (d.slug === updated.slug ? updated : d))
     );
   };
 
   const addDestination = (newDest: Destination) => {
+    const isAuthorizedAdmin = isAdmin && user?.email?.toLowerCase().trim() === 'admin@travroidd.com';
+    if (!isAuthorizedAdmin) {
+      throw new Error('Access denied: Administrative privileges required.');
+    }
     setDestinations((prev) => [...prev, newDest]);
   };
 
   const deleteDestination = (slug: string) => {
+    const isAuthorizedAdmin = isAdmin && user?.email?.toLowerCase().trim() === 'admin@travroidd.com';
+    if (!isAuthorizedAdmin) {
+      throw new Error('Access denied: Administrative privileges required.');
+    }
     setDestinations((prev) => prev.filter((d) => d.slug !== slug));
   };
 

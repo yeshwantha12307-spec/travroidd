@@ -1,17 +1,47 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Pre-defined destination prices for authoritative server-side validation
+// Pre-defined destination prices for authoritative server-side validation (all 27 packages)
 const DESTINATION_PRICES = {
-  goa: 7999,
-  manali: 8999,
-  munnar: 9999,
-  ooty: 8999,
-  kodaikanal: 8999,
+  // Source-Image Verified & Corrected Packages
+  goa: 5999,
+  manali: 7999,
+  varkala: 3999,
+  dharamshala: 7999,
+  tawang: 11999,
+  'taj-mahal': 6999,
+  'taj mahal': 6999,
+  'golden-temple': 6999,
+  'golden temple': 6999,
+  'hawa-mahal': 5999,
+  'hawa mahal': 5999,
+  rajasthan: 5999,
+  ooty: 5999,
+  kasol: 8999,
+  nepal: 10999,
+  shimla: 9999,
+  kodaikanal: 5999,
+  hyderabad: 4999,
+  maharashtra: 12999,
+  ladakh: 12999,
+  kashmir: 12999,
+  'kashmir & ladakh': 12999,
+  'kashmir & jammu': 12999,
+
+  // User-Approved Packages
+  'mysuru-palace': 2999,
+  'mysuru palace': 2999,
+  mysuru: 2999,
+
+  // Custom-Plan Package (no fixed price invented, default base package rate)
+  'party-package': 4999,
+  'night out & party planning': 4999,
+  'party planning': 4999,
+
+  // Preserved Unverified Packages
+  munnar: 8999,
   andaman: 12999,
   kerala: 9999,
   udaipur: 9999,
-  rajasthan: 9999,
-  kashmir: 11999,
   darjeeling: 8999,
   rameswaram: 8999,
   kanyakumari: 9999,
